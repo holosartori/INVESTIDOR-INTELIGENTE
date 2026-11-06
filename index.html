@@ -1,149 +1,53 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Simulador e comparador de investimentos de renda fixa.">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Investidor Inteligente | Simulador</title>
 <style>
-:root{--bg:#f4f7fb;--card:#fff;--ink:#172338;--muted:#68758a;--line:#e4eaf2;--navy:#142b4a;--blue:#2864a5;--teal:#0c817b;--green:#13795b;--gold:#fff4d6;--shadow:0 12px 32px rgba(22,43,72,.07)}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
-header{background:linear-gradient(120deg,#102541,#1b456b);color:#fff;padding:26px max(22px,calc((100vw - 1180px)/2))}
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-size:20px;font-weight:800;letter-spacing:.2px}.brand span{color:#7ed6c7}.status{font-size:12px;color:#d7e6f5;border:1px solid #52708e;padding:6px 10px;border-radius:30px}
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172338;--muted:#68758a;--line:#e4eaf2;--navy:#142b4a;--blue:#2864a5;--green:#13795b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:linear-gradient(120deg,#102541,#1b456b);color:white;padding:26px max(22px,calc((100vw - 1180px)/2))}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-size:20px;font-weight:800}.brand span{color:#7ed6c7}.status{font-size:12px;border:1px solid #52708e;padding:6px 10px;border-radius:30px}
 header h1{font-size:clamp(25px,4vw,38px);line-height:1.12;margin:28px 0 8px}header p{color:#d4e0ed;margin:0;max-width:680px}
-main{max-width:1180px;margin:26px auto;padding:0 20px 50px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.nav a{color:var(--muted);text-decoration:none;background:#fff;border:1px solid var(--line);padding:8px 13px;border-radius:9px;font-size:13px}.nav a.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-.layout{display:grid;grid-template-columns:340px 1fr;gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}h2{font-size:18px;margin:0 0 4px}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}.field{margin:14px 0}.field label{display:block;font-size:12px;font-weight:700;color:#526078;margin-bottom:6px}.field input,.field select{width:100%;border:1px solid #d8e0eb;border-radius:9px;padding:11px 12px;font:inherit;color:var(--ink);background:#fff;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2864a51c}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:0;background:var(--blue);color:#fff;border-radius:10px;padding:12px 16px;font-weight:750;cursor:pointer;width:100%;margin-top:8px}.btn:hover{filter:brightness(1.06)}.btn.secondary{background:#eaf1f8;color:var(--navy);border:1px solid #d8e4f0}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.kpi{padding:15px;background:#f8fafc;border:1px solid var(--line);border-radius:12px}.kpi small{display:block;color:var(--muted);font-size:11px;font-weight:700}.kpi strong{display:block;font-size:21px;letter-spacing:-.5px;margin-top:5px}.kpi .positive{color:var(--green)}
-.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th{text-align:left;color:#627087;font-size:11px;text-transform:uppercase;letter-spacing:.04em;background:#f7f9fc}th,td{padding:11px 10px;border-bottom:1px solid var(--line);white-space:nowrap}td strong{color:var(--navy)}.best{background:#edf8f3}.tag{display:inline-block;border-radius:30px;padding:3px 8px;background:#e8f3f2;color:#126b65;font-size:11px;font-weight:700}.chartbox{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:14px}.chartbox canvas{width:100%;height:210px;display:block}.chart-title{font-weight:750;font-size:14px;margin-bottom:8px}
-.note{font-size:12px;color:var(--muted);background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:14px}.warning{background:var(--gold);border-color:#f1dfae;color:#74581b}.section{margin-top:18px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.section-head h2{margin:0}.smallbtn{border:1px solid #d8e0eb;background:white;color:var(--blue);padding:7px 10px;border-radius:8px;font-weight:700;cursor:pointer}
+main{max-width:1180px;margin:26px auto;padding:0 20px 50px}.layout{display:grid;grid-template-columns:340px 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 12px 32px #162b480c}h2{font-size:18px;margin:0 0 4px}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+.field{margin:14px 0}.field label{display:block;font-size:12px;font-weight:700;color:#526078;margin-bottom:6px}.field input{width:100%;border:1px solid #d8e0eb;border-radius:9px;padding:11px 12px;font:inherit}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:0;background:var(--blue);color:#fff;border-radius:10px;padding:12px 16px;font-weight:750;cursor:pointer;width:100%;margin-top:8px}.btn.secondary{background:#eaf1f8;color:var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.kpi{padding:15px;background:#f8fafc;border:1px solid var(--line);border-radius:12px}.kpi small{display:block;color:var(--muted);font-size:11px;font-weight:700}.kpi strong{display:block;font-size:21px;margin-top:5px}.positive{color:var(--green)}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:11px 10px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}th{color:#627087;font-size:11px;background:#f7f9fc;text-transform:uppercase}.best{background:#edf8f3}.tag{display:inline-block;border-radius:30px;padding:3px 8px;background:#e8f3f2;color:#126b65;font-size:11px;font-weight:700}.table-wrap{overflow-x:auto}.chartbox{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:14px}.chartbox canvas{width:100%;height:210px;display:block}.note{font-size:12px;color:var(--muted);background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:14px}.warning{background:#fff4d6;border-color:#f1dfae;color:#74581b}.section{margin-top:18px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.smallbtn{border:1px solid #d8e0eb;background:white;color:var(--blue);padding:7px 10px;border-radius:8px;font-weight:700;cursor:pointer}
 footer{max-width:1180px;margin:auto;padding:0 20px 30px;color:var(--muted);font-size:12px}
-@media(max-width:850px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}.two{grid-template-columns:1fr 1fr}}@media(max-width:480px){.two{grid-template-columns:1fr}.card{padding:16px}header{padding-top:20px}}
-</style>
-</head>
-<body>
-<header>
- <div class="top"><div class="brand">INVESTIDOR <span>INTELIGENTE</span></div><div class="status">VERSÃO MVP • SIMULAÇÃO</div></div>
- <h1>Invista com números.<br>Decida com clareza.</h1>
- <p>Simule cenários, compare renda fixa e entenda o efeito dos aportes, dos juros e dos impostos sobre seu patrimônio.</p>
-</header>
-<main>
- <nav class="nav"><a class="active" href="#simulador">Simulador</a><a href="#comparador">Comparador</a><a href="#metodologia">Metodologia</a></nav>
- <div class="layout" id="simulador">
-  <section class="card">
-   <h2>Parâmetros da simulação</h2><p class="sub">Altere os campos para recalcular os resultados.</p>
-   <div class="field"><label for="initial">INVESTIMENTO INICIAL (R$)</label><input id="initial" type="number" min="0" step="100" value="5000"></div>
-   <div class="field"><label for="monthly">APORTE MENSAL (R$)</label><input id="monthly" type="number" min="0" step="50" value="500"></div>
-   <div class="two">
-    <div class="field"><label for="years">PRAZO (ANOS)</label><input id="years" type="number" min="0.1" max="50" step="0.5" value="5"></div>
-    <div class="field"><label for="cdi">CDI ANUAL (%)</label><input id="cdi" type="number" min="0" max="100" step=".01" value="14"></div>
-   </div>
-   <div class="two">
-    <div class="field"><label for="ipca">IPCA ANUAL (%)</label><input id="ipca" type="number" min="-10" max="100" step=".01" value="4.5"></div>
-    <div class="field"><label for="real">JURO REAL IPCA+ (%)</label><input id="real" type="number" min="0" max="100" step=".01" value="7"></div>
-   </div>
-   <button class="btn" id="calculate">Calcular investimentos</button>
-   <button class="btn secondary" id="reset">Restaurar exemplo</button>
-   <div class="note warning">As taxas preenchidas são exemplos editáveis, não cotações atuais nem previsão de rentabilidade.</div>
-  </section>
-  <section>
-   <div class="kpis">
-    <div class="kpi"><small>TOTAL APORTADO</small><strong id="totalInvested">R$ 0,00</strong></div>
-    <div class="kpi"><small>MELHOR RESULTADO LÍQUIDO</small><strong class="positive" id="bestValue">R$ 0,00</strong></div>
-    <div class="kpi"><small>RENDIMENTO DO MELHOR CENÁRIO</small><strong id="bestGain">R$ 0,00</strong></div>
-   </div>
-   <div class="card">
-    <div class="section-head"><div><h2>Comparação de investimentos</h2><p class="sub" style="margin:4px 0 0">Estimativa de saldo no fim do prazo, com aportes mensais.</p></div><span class="tag">IR considerado</span></div>
-    <div class="table-wrap"><table><thead><tr><th>Produto</th><th>Taxa</th><th>Saldo bruto</th><th>IR estimado</th><th>Saldo líquido</th></tr></thead><tbody id="results"></tbody></table></div>
-    <div class="chartbox"><div class="chart-title">Patrimônio projetado ao longo do tempo</div><canvas id="chart" width="900" height="250" aria-label="Gráfico de evolução do patrimônio"></canvas></div>
-   </div>
-   <div class="card section" id="comparador">
-    <div class="section-head"><div><h2>Comparador de ofertas</h2><p class="sub" style="margin:4px 0 0">Personalize as taxas das ofertas para avaliar propostas reais.</p></div><button class="smallbtn" id="addOffer">+ Adicionar oferta</button></div>
-    <div class="table-wrap"><table><thead><tr><th>Oferta</th><th>Produto</th><th>Taxa / parâmetro</th><th>IR</th><th></th></tr></thead><tbody id="offers"></tbody></table></div>
-    <p class="note">Nesta versão, os cenários são estimativas com taxa anual constante. Para CDB, o imposto é aproximado sobre o ganho total e não individualiza cada aporte por data. O Tesouro Direto pode ter custódia, marcação a mercado e regras específicas não contempladas nesta versão.</p>
-   </div>
-  </section>
- </div>
- <section class="card section" id="metodologia">
-  <h2>Como os cálculos funcionam</h2>
-  <p class="sub">Premissas explícitas para que você saiba o que está comparando.</p>
-  <ul style="margin:0;padding-left:20px;color:#526078;font-size:13px">
-   <li>Taxas anuais são convertidas em taxas mensais equivalentes por capitalização composta.</li>
-   <li>Os aportes são considerados no fim de cada mês.</li>
-   <li>LCI/LCA: rendimento líquido estimado sem IR para pessoa física, conforme legislação vigente aplicável.</li>
-   <li>CDB: IR regressivo aproximado conforme o prazo total da simulação; a tributação real pode variar por aporte.</li>
-   <li>IPCA+: combina inflação e taxa real; o resultado nominal depende da inflação realizada.</li>
-   <li>Não estão incluídos spread, taxas de custódia, tarifas, preço de compra/venda ou resgate antecipado.</li>
-  </ul>
- </section>
-</main>
-<footer>Investidor Inteligente • Ferramenta educativa de simulação. Não constitui recomendação de investimento. Confirme taxas, carência, liquidez, emissor e condições contratuais antes de investir.</footer>
+@media(max-width:850px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}}@media(max-width:480px){.two{grid-template-columns:1fr}.card{padding:16px}}
+</style></head><body>
+<header><div class="top"><div class="brand">INVESTIDOR <span>INTELIGENTE</span></div><div class="status">VERSÃO CORRIGIDA • 1.1</div></div>
+<h1>Invista com números.<br>Decida com clareza.</h1><p>Simule cenários, compare renda fixa e entenda o efeito dos aportes, dos juros e dos impostos sobre seu patrimônio.</p></header>
+<main><div class="layout" id="simulador">
+<section class="card"><h2>Parâmetros da simulação</h2><p class="sub">Altere os campos para recalcular os resultados.</p>
+<div class="field"><label>INVESTIMENTO INICIAL (R$)</label><input id="initial" type="number" min="0" step="100" value="5000"></div>
+<div class="field"><label>APORTE MENSAL (R$)</label><input id="monthly" type="number" min="0" step="50" value="500"></div>
+<div class="two"><div class="field"><label>PRAZO (ANOS)</label><input id="years" type="number" min=".1" max="50" step=".5" value="5"></div><div class="field"><label>CDI ANUAL (%)</label><input id="cdi" type="number" min="0" max="100" step=".01" value="14"></div></div>
+<div class="two"><div class="field"><label>IPCA ANUAL (%)</label><input id="ipca" type="number" min="-10" max="100" step=".01" value="4.5"></div><div class="field"><label>JURO REAL IPCA+ (%)</label><input id="real" type="number" min="0" max="100" step=".01" value="7"></div></div>
+<button class="btn" id="calculate">Calcular investimentos</button><button class="btn secondary" id="reset">Restaurar exemplo</button>
+<div class="note warning">Taxas ilustrativas e editáveis. Não são cotações atuais nem previsão de rentabilidade.</div></section>
+<section><div class="kpis"><div class="kpi"><small>TOTAL APORTADO</small><strong id="totalInvested">R$ 0,00</strong></div><div class="kpi"><small>MELHOR RESULTADO LÍQUIDO</small><strong class="positive" id="bestValue">R$ 0,00</strong></div><div class="kpi"><small>GANHO DO MELHOR CENÁRIO</small><strong id="bestGain">R$ 0,00</strong></div></div>
+<div class="card"><div class="section-head"><div><h2>Comparação de investimentos</h2><p class="sub" style="margin:4px 0 0">Saldo estimado ao fim do prazo, com aportes mensais.</p></div><span class="tag">IR estimado</span></div>
+<div class="table-wrap"><table><thead><tr><th>Produto</th><th>Taxa</th><th>Saldo bruto</th><th>IR estimado</th><th>Saldo líquido</th></tr></thead><tbody id="results"></tbody></table></div>
+<div class="chartbox"><b>Patrimônio projetado — referência LCI 95% CDI</b><canvas id="chart" width="900" height="250"></canvas></div></div>
+<div class="card section" id="comparador"><div class="section-head"><div><h2>Comparador de ofertas</h2><p class="sub" style="margin:4px 0 0">Personalize as taxas das ofertas.</p></div><button class="smallbtn" id="addOffer">+ Adicionar oferta</button></div>
+<div class="table-wrap"><table><thead><tr><th>Oferta</th><th>Produto</th><th>Taxa / parâmetro</th><th>IR</th><th></th></tr></thead><tbody id="offers"></tbody></table></div>
+<p class="note">O CDB usa IR aproximado sobre o ganho total. A tributação real deve ser calculada por lote e prazo de cada aporte. Custódia, IOF, marcação a mercado e regras específicas não estão contemplados.</p></div></section></div>
+<section class="card section"><h2>Metodologia e limites</h2><ul style="color:#526078;font-size:13px"><li>CDI inserido em percentual anual é convertido para decimal antes do cálculo. Exemplo: 14% × 95% = 13,30% a.a.</li><li>Taxas anuais são convertidas em taxas mensais equivalentes por capitalização composta.</li><li>Aportes considerados no fim de cada mês.</li><li>LCI/LCA sem IR para pessoa física, conforme legislação aplicável.</li><li>CDB com alíquota regressiva aproximada sobre o ganho total.</li><li>IPCA+ combina inflação e taxa real estimadas.</li></ul></section></main>
+<footer>Ferramenta educativa. Não constitui recomendação de investimento. Confirme taxa, carência, liquidez, emissor, custos e condições contratuais.</footer>
 <script>
-const $=id=>document.getElementById(id);
-const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const pct=v=>(v*100).toFixed(2).replace('.',',')+'%';
-let offers=[
- {name:'LCI 95% do CDI',type:'cdi_exempt',rate:95,tax:0},
- {name:'LCA 92% do CDI',type:'cdi_exempt',rate:92,tax:0},
- {name:'CDB 110% do CDI',type:'cdi_taxed',rate:110,tax:null},
- {name:'Prefixado 12% a.a.',type:'fixed',rate:12,tax:null},
- {name:'Tesouro IPCA+ 7%',type:'ipca',rate:7,tax:null}
-];
+const $=id=>document.getElementById(id), brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}), pct=v=>(v*100).toFixed(2).replace('.',',')+'%';
+let offers=[{name:'LCI 95% do CDI',type:'cdi_exempt',rate:95},{name:'LCA 92% do CDI',type:'cdi_exempt',rate:92},{name:'CDB 110% do CDI',type:'cdi_taxed',rate:110},{name:'Prefixado 12% a.a.',type:'fixed',rate:12},{name:'Tesouro IPCA+ 7%',type:'ipca',rate:7}];
 function num(id){return Math.max(0,Number($(id).value)||0)}
-function futureValue(pv,pmt,annualRate,months){
- const m=Math.pow(1+annualRate,1/12)-1;
- if(months<=0)return pv;
- const initial=pv*Math.pow(1+m,months);
- const contributions=Math.abs(m)<1e-10?pmt*months:pmt*(Math.pow(1+m,months)-1)/m;
- return initial+contributions;
-}
-function irRate(years){if(years<=.5)return .225;if(years<=1)return .20;if(years<=2)return .175;return .15}
-function annualRate(o,cdi,ipca,real){
- if(o.type==='cdi_exempt'||o.type==='cdi_taxed')return cdi*o.rate/100;
- if(o.type==='fixed')return o.rate/100;
- if(o.type==='ipca')return (1+ipca/100)*(1+o.rate/100)-1;
- return 0;
-}
-function calc(){
- const pv=num('initial'),pmt=num('monthly'),years=Math.min(50,Math.max(.1,num('years'))),months=Math.round(years*12);
- const cdi=num('cdi'),ipca=Number($('ipca').value)||0,real=num('real'),invested=pv+pmt*months;
- $('totalInvested').textContent=brl(invested);
- const data=offers.map(o=>{
-  const rate=annualRate(o,cdi,ipca,real);
-  const gross=futureValue(pv,pmt,rate,months);
-  const taxFree=o.type==='cdi_exempt';
-  const tax=taxFree?0:Math.max(0,gross-invested)*irRate(years);
-  const net=gross-tax;
-  return {...o,rate,gross,tax,net};
- }).sort((a,b)=>b.net-a.net);
- $('results').innerHTML=data.map((o,i)=>`<tr class="${i===0?'best':''}"><td><strong>${o.name}</strong>${i===0?' <span class="tag">Maior saldo</span>':''}</td><td>${pct(o.rate)} a.a.</td><td>${brl(o.gross)}</td><td>${brl(o.tax)}</td><td><strong>${brl(o.net)}</strong></td></tr>`).join('');
- $('bestValue').textContent=brl(data[0].net);
- $('bestGain').textContent=brl(data[0].net-invested);
- drawChart(pv,pmt,months,cdi,ipca,real);
- renderOffers();
-}
-function drawChart(pv,pmt,months,cdi,ipca,real){
- const canvas=$('chart'),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
- ctx.clearRect(0,0,w,h);const pad={l:75,r:20,t:12,b:35},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;
- const rate=cdi/100*.95,vals=[];
- for(let m=0;m<=months;m+=Math.max(1,Math.floor(months/60))) vals.push({m,v:futureValue(pv,pmt,rate,m)});
- vals.push({m:months,v:futureValue(pv,pmt,rate,months)});
- const max=Math.max(...vals.map(x=>x.v),1);
- ctx.strokeStyle='#e7edf4';ctx.lineWidth=1;ctx.fillStyle='#718096';ctx.font='12px sans-serif';
- for(let i=0;i<=4;i++){let y=pad.t+ph*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(brl(max*(1-i/4)).replace(',00',''),4,y+4)}
- ctx.strokeStyle='#137f78';ctx.lineWidth=3;ctx.beginPath();
- vals.forEach((p,i)=>{let x=pad.l+pw*p.m/months,y=pad.t+ph*(1-p.v/max);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.stroke();
- ctx.fillStyle='#718096';ctx.fillText('Início',pad.l,h-8);ctx.fillText('Prazo final',w-pad.r-65,h-8);
-}
-function renderOffers(){
- $('offers').innerHTML=offers.map((o,i)=>`<tr><td><input aria-label="Nome da oferta" data-i="${i}" data-k="name" value="${o.name}" style="width:170px;padding:7px;border:1px solid #d8e0eb;border-radius:7px"></td><td><select data-i="${i}" data-k="type" style="padding:7px;border:1px solid #d8e0eb;border-radius:7px"><option value="cdi_exempt" ${o.type==='cdi_exempt'?'selected':''}>LCI/LCA (% CDI)</option><option value="cdi_taxed" ${o.type==='cdi_taxed'?'selected':''}>CDB (% CDI)</option><option value="fixed" ${o.type==='fixed'?'selected':''}>Prefixado (% a.a.)</option><option value="ipca" ${o.type==='ipca'?'selected':''}>IPCA + (% real)</option></select></td><td><input type="number" min="0" step=".01" data-i="${i}" data-k="rate" value="${o.rate}" style="width:95px;padding:7px;border:1px solid #d8e0eb;border-radius:7px"></td><td>${o.type==='cdi_exempt'?'Isento':(irRate(num('years'))*100).toFixed(1)+'%'}</td><td><button class="smallbtn" data-remove="${i}" aria-label="Remover oferta">Remover</button></td></tr>`).join('');
- $('offers').querySelectorAll('[data-i]').forEach(el=>el.addEventListener('change',e=>{const i=+e.target.dataset.i,k=e.target.dataset.k;offers[i][k]=k==='rate'?Number(e.target.value):e.target.value;calc()}));
- $('offers').querySelectorAll('[data-remove]').forEach(el=>el.addEventListener('click',()=>{if(offers.length>1){offers.splice(+el.dataset.remove,1);calc()}}));
-}
-$('calculate').addEventListener('click',calc);
-$('reset').addEventListener('click',()=>{Object.entries({initial:5000,monthly:500,years:5,cdi:14,ipca:4.5,real:7}).forEach(([k,v])=>$(k).value=v);calc()});
-$('addOffer').addEventListener('click',()=>{offers.push({name:'Nova oferta '+(offers.length+1),type:'cdi_exempt',rate:90,tax:0});calc()});
-['initial','monthly','years','cdi','ipca','real'].forEach(id=>$(id).addEventListener('change',calc));
-calc();
-</script>
-</body>
-</html>
+function fv(pv,pmt,annualDecimal,months){const m=Math.pow(1+annualDecimal,1/12)-1;return pv*Math.pow(1+m,months)+(Math.abs(m)<1e-10?pmt*months:pmt*(Math.pow(1+m,months)-1)/m)}
+function irRate(y){return y<=.5?.225:y<=1?.20:y<=2?.175:.15}
+function annualRate(o,cdi,ipca){if(o.type==='cdi_exempt'||o.type==='cdi_taxed')return (cdi/100)*(o.rate/100);if(o.type==='fixed')return o.rate/100;if(o.type==='ipca')return (1+ipca/100)*(1+o.rate/100)-1;return 0}
+function calc(){const pv=num('initial'),pmt=num('monthly'),years=Math.min(50,Math.max(.1,num('years'))),months=Math.round(years*12),cdi=num('cdi'),ipca=Number($('ipca').value)||0,invested=pv+pmt*months;$('totalInvested').textContent=brl(invested);
+const data=offers.map(o=>{const rate=annualRate(o,cdi,ipca),gross=fv(pv,pmt,rate,months),tax=o.type==='cdi_exempt'?0:Math.max(0,gross-invested)*irRate(years);return {...o,rate,gross,tax,net:gross-tax}}).sort((a,b)=>b.net-a.net);
+$('results').innerHTML=data.map((o,i)=>`<tr class="${i===0?'best':''}"><td><b>${o.name}</b>${i===0?' <span class="tag">Maior saldo</span>':''}</td><td>${pct(o.rate)} a.a.</td><td>${brl(o.gross)}</td><td>${brl(o.tax)}</td><td><b>${brl(o.net)}</b></td></tr>`).join('');$('bestValue').textContent=brl(data[0].net);$('bestGain').textContent=brl(data[0].net-invested);drawChart(pv,pmt,months,cdi)}
+function drawChart(pv,pmt,months,cdi){const c=$('chart'),x=c.getContext('2d'),w=c.width,h=c.height,p={l:80,r:20,t:12,b:35},pw=w-p.l-p.r,ph=h-p.t-p.b,rate=(cdi/100)*.95,vals=[];for(let m=0;m<=months;m+=Math.max(1,Math.floor(months/60)))vals.push({m,v:fv(pv,pmt,rate,m)});vals.push({m:months,v:fv(pv,pmt,rate,months)});const max=Math.max(...vals.map(v=>v.v),1);x.clearRect(0,0,w,h);x.font='12px sans-serif';x.fillStyle='#718096';for(let i=0;i<=4;i++){let y=p.t+ph*i/4;x.strokeStyle='#e7edf4';x.beginPath();x.moveTo(p.l,y);x.lineTo(w-p.r,y);x.stroke();x.fillText(brl(max*(1-i/4)).replace(',00',''),4,y+4)}x.strokeStyle='#137f78';x.lineWidth=3;x.beginPath();vals.forEach((v,i)=>{let xx=p.l+pw*v.m/months,yy=p.t+ph*(1-v.v/max);i?x.lineTo(xx,yy):x.moveTo(xx,yy)});x.stroke();x.fillStyle='#718096';x.fillText('Início',p.l,h-8);x.fillText('Prazo final',w-p.r-65,h-8)}
+function renderOffers(){$('offers').innerHTML=offers.map((o,i)=>`<tr><td><input data-i="${i}" data-k="name" value="${o.name}" style="width:160px"></td><td><select data-i="${i}" data-k="type"><option value="cdi_exempt" ${o.type==='cdi_exempt'?'selected':''}>LCI/LCA (% CDI)</option><option value="cdi_taxed" ${o.type==='cdi_taxed'?'selected':''}>CDB (% CDI)</option><option value="fixed" ${o.type==='fixed'?'selected':''}>Prefixado (% a.a.)</option><option value="ipca" ${o.type==='ipca'?'selected':''}>IPCA + (% real)</option></select></td><td><input type="number" min="0" step=".01" data-i="${i}" data-k="rate" value="${o.rate}" style="width:85px"></td><td>${o.type==='cdi_exempt'?'Isento':(irRate(num('years'))*100).toFixed(1)+'%'}</td><td><button class="smallbtn" data-remove="${i}">Remover</button></td></tr>`).join('');$('offers').querySelectorAll('[data-i]').forEach(e=>e.addEventListener('change',ev=>{let i=+ev.target.dataset.i,k=ev.target.dataset.k;offers[i][k]=k==='rate'?Number(ev.target.value):ev.target.value;calc()}));$('offers').querySelectorAll('[data-remove]').forEach(e=>e.addEventListener('click',()=>{if(offers.length>1){offers.splice(+e.target.dataset.remove,1);calc()}}))}
+$('calculate').onclick=calc;$('reset').onclick=()=>{Object.entries({initial:5000,monthly:500,years:5,cdi:14,ipca:4.5,real:7}).forEach(([k,v])=>$(k).value=v);calc()};$('addOffer').onclick=()=>{offers.push({name:'Nova oferta '+(offers.length+1),type:'cdi_exempt',rate:90});calc()};['initial','monthly','years','cdi','ipca','real'].forEach(id=>$(id).addEventListener('change',calc));calc();
+</script></body></html>
