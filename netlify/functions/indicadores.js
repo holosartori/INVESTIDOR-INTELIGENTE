@@ -1,8 +1,5 @@
 // Investidor Inteligente — Netlify Function
-// SGS 4389: CDI anualizado (% a.a., base 252)
-// SGS 12: CDI diário (% a.d.)
-// SGS 432: meta Selic (% a.a.) — consulta conservadora dos últimos 10 registros
-// SGS 433: IPCA mensal (%)
+// Tratamento de HTTP 304 do endpoint público SGS do Banco Central.
 
 const BASE = "https://api.bcb.gov.br/dados/serie/bcdata.sgs";
 
@@ -15,18 +12,50 @@ function todaySP() {
     timeZone:"America/Sao_Paulo", year:"numeric", month:"2-digit", day:"2-digit"
   }).format(new Date());
 }
+
+async function fetchSgsBody(url, code) {
+  // Primeira tentativa sem validadores condicionais e pedindo resposta não armazenada.
+  let response = await fetch(url, {
+    method:"GET",
+    headers:{
+      "Accept":"application/json",
+      "Cache-Control":"no-cache, no-store, max-age=0",
+      "Pragma":"no-cache"
+    }
+  });
+
+  // 304 não traz corpo. Repetimos com query string única para evitar cache intermediário.
+  if (response.status === 304) {
+    const separator = url.includes("?") ? "&" : "?";
+    const retryUrl = `${url}${separator}_cb=${Date.now()}`;
+    response = await fetch(retryUrl, {
+      method:"GET",
+      headers:{
+        "Accept":"application/json",
+        "Cache-Control":"no-cache, no-store, max-age=0",
+        "Pragma":"no-cache"
+      }
+    });
+  }
+
+  const body = await response.text();
+  if (response.status === 304) {
+    throw new Error(`BCB SGS ${code}: HTTP 304 mesmo após nova tentativa sem cache. URL consultada: ${url}`);
+  }
+  if (!response.ok) {
+    throw new Error(`BCB SGS ${code}: HTTP ${response.status}; resposta: ${body.slice(0,350)}`);
+  }
+  return body;
+}
+
 async function getLast(code, n) {
   const count = Math.max(1, Math.min(20, n));
   const url = `${BASE}.${code}/dados/ultimos/${count}?formato=json`;
-  let response;
+  let body;
   try {
-    response = await fetch(url, { headers: { Accept:"application/json" } });
-  } catch (e) {
-    throw new Error(`BCB SGS ${code}: falha de conexão: ${e.message}`);
-  }
-  const body = await response.text();
-  if (!response.ok) {
-    throw new Error(`BCB SGS ${code}: HTTP ${response.status}; resposta: ${body.slice(0,350)}`);
+    body = await fetchSgsBody(url, code);
+  } catch(e) {
+    throw new Error(e.message || `BCB SGS ${code}: falha de consulta`);
   }
   let rows;
   try { rows = JSON.parse(body); }
@@ -45,8 +74,6 @@ function compoundPct(values) {
 
 exports.handler = async () => {
   try {
-    // Selic 432 usa 10 observações, pois esse tamanho já funcionou
-    // no endpoint desta implantação. As demais séries usam no máximo 20.
     const [cdiAnnualRows,cdiDailyRows,selicRows,ipcaRows] = await Promise.all([
       getLast(4389,20),
       getLast(12,20),
@@ -85,9 +112,9 @@ exports.handler = async () => {
         ipcaMonthlyObservations:ipca12
       },
       diagnostics:{
+        cache304RetryEnabled:true,
         requestedCounts:{cdiAnnual:20,cdiDaily:20,selic:10,ipca:12},
-        returnedCounts:{cdiAnnual:cdiAnnualRows.length,cdiDaily:cdiDailyRows.length,selic:selicRows.length,ipca:ipcaRows.length},
-        selicLastRecords:selicRows.slice(-3)
+        returnedCounts:{cdiAnnual:cdiAnnualRows.length,cdiDaily:cdiDailyRows.length,selic:selicRows.length,ipca:ipcaRows.length}
       },
       methodology:{
         cdi:"SGS 12 anualizado em 252 dias úteis; SGS 4389 usado como conferência.",
@@ -99,7 +126,8 @@ exports.handler = async () => {
       statusCode:200,
       headers:{
         "Content-Type":"application/json; charset=utf-8",
-        "Cache-Control":"public, max-age=300, s-maxage=600, stale-while-revalidate=1800",
+        "Cache-Control":"no-store, max-age=0",
+        "Pragma":"no-cache",
         "Access-Control-Allow-Origin":"*"
       },
       body:JSON.stringify(result)
