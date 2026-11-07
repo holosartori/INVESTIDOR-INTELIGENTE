@@ -1,20 +1,24 @@
-# Patch 2.1 — correção IPCA e data futura da Selic
+# Patch 2.5 — IPCA direto pela série SGS 13522
 
-Substitua `netlify/functions/indicadores.js` pelo arquivo deste pacote e faça commit/push.
+O endpoint da SGS 433 está retornando HTTP 304 repetidamente nesta implantação. Para não depender de uma série mensal e de composição local, este patch passa a usar a série oficial SGS 13522, cuja descrição é "IPCA — em 12 meses".
 
-Correções:
-1. `ipca12mPercent` agora retorna um número (ex.: 4.5761), não a lista de 12 meses.
-2. Datas futuras são removidas das séries antes de selecionar a última observação.
-3. CDI exibido é anualizado a partir da taxa diária SGS 12 mais recente, enquanto SGS 4389 fica como conferência.
-4. Data do CDI exibido corresponde à data da taxa diária utilizada.
+Vantagens:
+- O Banco Central já publica o IPCA acumulado em 12 meses.
+- O campo `ipca12mPercent` recebe diretamente um número.
+- Remove a consulta à SGS 433 que estava falhando.
+- Mantém CDI, Selic, filtro de datas futuras e diagnóstico de quantidade de registros.
 
-Depois do deploy, teste:
-`https://calculadorainvesti.netlify.app/.netlify/functions/indicadores`
+## Instalação
+Substitua apenas `netlify/functions/indicadores.js` no GitHub pelo arquivo deste pacote. Faça commit e aguarde o deploy.
 
-Resultado esperado na estrutura:
-- `indicators.ipca12mPercent`: número.
-- `indicators.selicDate`: data não posterior à data atual em São Paulo.
-- `indicators.cdiAnnualPercent`: número anualizado.
-- `indicators.cdiConsistent`: true/false ou null se não houver série anual disponível.
+Teste:
+https://calculadorainvesti.netlify.app/.netlify/functions/indicadores
 
-O frontend pode continuar usando os mesmos nomes `cdiAnnualPercent`, `selicMetaPercent` e `ipca12mPercent`.
+Resultado esperado:
+- `ok: true`
+- `indicators.ipca12mPercent`: número, próximo de 4.58 para a referência set/2026 que apareceu no retorno anterior.
+- `indicators.ipcaDate`: mês de referência da série 13522.
+- `diagnostics.ipcaSourceSeries`: 13522.
+
+Fonte oficial da série 13522:
+https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarSeries&series=13522

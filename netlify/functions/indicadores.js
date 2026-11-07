@@ -1,5 +1,9 @@
 // Investidor Inteligente — Netlify Function
-// Tratamento de HTTP 304 do endpoint público SGS do Banco Central.
+// Fontes BCB/SGS:
+// 4389 CDI anualizado (% a.a., base 252)
+// 12 CDI diário (% a.d.)
+// 432 Meta Selic (% a.a.)
+// 13522 IPCA acumulado em 12 meses (%). Série direta — substitui a composição da SGS 433.
 
 const BASE = "https://api.bcb.gov.br/dados/serie/bcdata.sgs";
 
@@ -12,84 +16,52 @@ function todaySP() {
     timeZone:"America/Sao_Paulo", year:"numeric", month:"2-digit", day:"2-digit"
   }).format(new Date());
 }
-
-async function fetchSgsBody(url, code) {
-  // Primeira tentativa sem validadores condicionais e pedindo resposta não armazenada.
-  let response = await fetch(url, {
-    method:"GET",
-    headers:{
+async function fetchSgs(code, n) {
+  const count = Math.max(1, Math.min(20, n));
+  const url = `${BASE}.${code}/dados/ultimos/${count}?formato=json`;
+  const response = await fetch(url, {
+    headers: {
       "Accept":"application/json",
-      "Cache-Control":"no-cache, no-store, max-age=0",
+      "Cache-Control":"no-cache",
       "Pragma":"no-cache"
     }
   });
-
-  // 304 não traz corpo. Repetimos com query string única para evitar cache intermediário.
-  if (response.status === 304) {
-    const separator = url.includes("?") ? "&" : "?";
-    const retryUrl = `${url}${separator}_cb=${Date.now()}`;
-    response = await fetch(retryUrl, {
-      method:"GET",
-      headers:{
-        "Accept":"application/json",
-        "Cache-Control":"no-cache, no-store, max-age=0",
-        "Pragma":"no-cache"
-      }
-    });
-  }
-
   const body = await response.text();
-  if (response.status === 304) {
-    throw new Error(`BCB SGS ${code}: HTTP 304 mesmo após nova tentativa sem cache. URL consultada: ${url}`);
-  }
   if (!response.ok) {
-    throw new Error(`BCB SGS ${code}: HTTP ${response.status}; resposta: ${body.slice(0,350)}`);
-  }
-  return body;
-}
-
-async function getLast(code, n) {
-  const count = Math.max(1, Math.min(20, n));
-  const url = `${BASE}.${code}/dados/ultimos/${count}?formato=json`;
-  let body;
-  try {
-    body = await fetchSgsBody(url, code);
-  } catch(e) {
-    throw new Error(e.message || `BCB SGS ${code}: falha de consulta`);
+    throw new Error(`BCB SGS ${code}: HTTP ${response.status}; resposta: ${body.slice(0,300)}`);
   }
   let rows;
   try { rows = JSON.parse(body); }
-  catch { throw new Error(`BCB SGS ${code}: resposta não é JSON: ${body.slice(0,250)}`); }
+  catch { throw new Error(`BCB SGS ${code}: resposta não é JSON: ${body.slice(0,200)}`); }
   if (!Array.isArray(rows)) throw new Error(`BCB SGS ${code}: formato inesperado.`);
   const today = todaySP();
   return rows.map(r => ({
-    date:r.data, isoDate:parseDateBR(r.data),
+    date:r.data,
+    isoDate:parseDateBR(r.data),
     value:Number(String(r.valor).replace(",","."))
   })).filter(r => Number.isFinite(r.value) && r.isoDate <= today)
     .sort((a,b)=>a.isoDate.localeCompare(b.isoDate));
 }
-function compoundPct(values) {
-  return (values.reduce((f,v)=>f*(1+v/100),1)-1)*100;
-}
 
 exports.handler = async () => {
   try {
-    const [cdiAnnualRows,cdiDailyRows,selicRows,ipcaRows] = await Promise.all([
-      getLast(4389,20),
-      getLast(12,20),
-      getLast(432,10),
-      getLast(433,12)
+    const [cdiAnnualRows,cdiDailyRows,selicRows,ipca12Rows] = await Promise.all([
+      fetchSgs(4389,20),
+      fetchSgs(12,20),
+      fetchSgs(432,10),
+      fetchSgs(13522,10)
     ]);
+
     if (!cdiDailyRows.length) throw new Error("SGS 12 não retornou CDI diário válido.");
     if (!selicRows.length) throw new Error("SGS 432 não retornou observações válidas até hoje.");
-    if (ipcaRows.length < 12) throw new Error(`SGS 433 retornou apenas ${ipcaRows.length} meses; são necessários 12.`);
+    if (!ipca12Rows.length) throw new Error("SGS 13522 não retornou IPCA acumulado em 12 meses.");
 
     const daily = cdiDailyRows.at(-1);
     const cdiAnnualFromDaily = (Math.pow(1+daily.value/100,252)-1)*100;
     const annualPublished = cdiAnnualRows.at(-1) || null;
     const diff = annualPublished ? Math.abs(cdiAnnualFromDaily-annualPublished.value) : null;
     const selic = selicRows.at(-1);
-    const ipca12 = ipcaRows.slice(-12);
+    const ipca12 = ipca12Rows.at(-1);
 
     const result = {
       ok:true,
@@ -106,28 +78,26 @@ exports.handler = async () => {
         cdiDifferencePp:diff,
         selicMetaPercent:selic.value,
         selicDate:selic.date,
-        ipca12mPercent:compoundPct(ipca12.map(x=>x.value)),
-        ipcaDateStart:ipca12[0].date,
-        ipcaDateEnd:ipca12.at(-1).date,
-        ipcaMonthlyObservations:ipca12
+        ipca12mPercent:ipca12.value,
+        ipcaDate:ipca12.date
       },
       diagnostics:{
-        cache304RetryEnabled:true,
-        requestedCounts:{cdiAnnual:20,cdiDaily:20,selic:10,ipca:12},
-        returnedCounts:{cdiAnnual:cdiAnnualRows.length,cdiDaily:cdiDailyRows.length,selic:selicRows.length,ipca:ipcaRows.length}
+        ipcaSourceSeries:13522,
+        ipcaSeriesDescription:"IPCA acumulado em 12 meses",
+        requestedCounts:{cdiAnnual:20,cdiDaily:20,selic:10,ipca12m:10},
+        returnedCounts:{cdiAnnual:cdiAnnualRows.length,cdiDaily:cdiDailyRows.length,selic:selicRows.length,ipca12m:ipca12Rows.length}
       },
       methodology:{
-        cdi:"SGS 12 anualizado em 252 dias úteis; SGS 4389 usado como conferência.",
-        selic:"SGS 432, últimos 10 registros, filtrando datas posteriores à data atual de São Paulo.",
-        ipca:"SGS 433, composição geométrica dos últimos 12 meses."
+        cdi:"SGS 12: última taxa diária, anualizada por (1 + taxa diária)^252 - 1. SGS 4389 é conferência.",
+        selic:"SGS 432: última observação válida, sem datas futuras.",
+        ipca:"SGS 13522: série oficial do IPCA acumulado em 12 meses; não precisa compor os 12 valores da SGS 433."
       }
     };
     return {
       statusCode:200,
       headers:{
         "Content-Type":"application/json; charset=utf-8",
-        "Cache-Control":"no-store, max-age=0",
-        "Pragma":"no-cache",
+        "Cache-Control":"public, max-age=300, s-maxage=600, stale-while-revalidate=1800",
         "Access-Control-Allow-Origin":"*"
       },
       body:JSON.stringify(result)
