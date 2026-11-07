@@ -1,103 +1,114 @@
-// Netlify Function — indicadores do Banco Central (SGS)
-// IMPORTANTE: o endpoint /ultimos/N aceita no máximo 20 observações.
+// Investidor Inteligente — Netlify Function
 // SGS 4389: CDI anualizado (% a.a., base 252)
 // SGS 12: CDI diário (% a.d.)
-// SGS 432: meta Selic (% a.a.)
+// SGS 432: meta Selic (% a.a.) — consulta conservadora dos últimos 10 registros
 // SGS 433: IPCA mensal (%)
 
 const BASE = "https://api.bcb.gov.br/dados/serie/bcdata.sgs";
 
-function parseSgsDate(dateText) {
-  const [day, month, year] = dateText.split("/");
-  return `${year}-${month.padStart(2,"0")}-${day.padStart(2,"0")}`;
+function parseDateBR(s) {
+  const [d,m,y] = s.split("/");
+  return `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
 }
-function todaySaoPaulo() {
+function todaySP() {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit"
+    timeZone:"America/Sao_Paulo", year:"numeric", month:"2-digit", day:"2-digit"
   }).format(new Date());
 }
-async function lastValues(code, count = 20) {
-  const safeCount = Math.min(20, Math.max(1, count));
-  const url = `${BASE}.${code}/dados/ultimos/${safeCount}?formato=json`;
-  const response = await fetch(url, { headers: { "Accept": "application/json" } });
-  if (!response.ok) {
-    const details = await response.text().catch(() => "");
-    throw new Error(`BCB SGS ${code}: HTTP ${response.status}${details ? " — " + details.slice(0,180) : ""}`);
-  }
-  const data = await response.json();
-  if (!Array.isArray(data)) throw new Error(`BCB SGS ${code}: resposta inválida`);
-  const today = todaySaoPaulo();
-  return data.map(row => ({
-    date: row.data,
-    isoDate: parseSgsDate(row.data),
-    value: Number(String(row.valor).replace(",", "."))
-  })).filter(row => Number.isFinite(row.value) && row.isoDate <= today)
-    .sort((a,b) => a.isoDate.localeCompare(b.isoDate));
-}
-function compoundPercent(monthlyRates) {
-  return (monthlyRates.reduce((factor, rate) => factor * (1 + rate / 100), 1) - 1) * 100;
-}
-exports.handler = async function () {
+async function getLast(code, n) {
+  const count = Math.max(1, Math.min(20, n));
+  const url = `${BASE}.${code}/dados/ultimos/${count}?formato=json`;
+  let response;
   try {
-    // Limite oficial/técnico do endpoint /ultimos/N: N máximo 20.
-    const [cdiAnnualSeries, cdiDailySeries, selicSeries, ipcaSeries] = await Promise.all([
-      lastValues(4389, 20),
-      lastValues(12, 20),
-      lastValues(432, 20), // corrigido: anteriormente era 30 e provocava HTTP 400
-      lastValues(433, 15)
+    response = await fetch(url, { headers: { Accept:"application/json" } });
+  } catch (e) {
+    throw new Error(`BCB SGS ${code}: falha de conexão: ${e.message}`);
+  }
+  const body = await response.text();
+  if (!response.ok) {
+    throw new Error(`BCB SGS ${code}: HTTP ${response.status}; resposta: ${body.slice(0,350)}`);
+  }
+  let rows;
+  try { rows = JSON.parse(body); }
+  catch { throw new Error(`BCB SGS ${code}: resposta não é JSON: ${body.slice(0,250)}`); }
+  if (!Array.isArray(rows)) throw new Error(`BCB SGS ${code}: formato inesperado.`);
+  const today = todaySP();
+  return rows.map(r => ({
+    date:r.data, isoDate:parseDateBR(r.data),
+    value:Number(String(r.valor).replace(",","."))
+  })).filter(r => Number.isFinite(r.value) && r.isoDate <= today)
+    .sort((a,b)=>a.isoDate.localeCompare(b.isoDate));
+}
+function compoundPct(values) {
+  return (values.reduce((f,v)=>f*(1+v/100),1)-1)*100;
+}
+
+exports.handler = async () => {
+  try {
+    // Selic 432 usa 10 observações, pois esse tamanho já funcionou
+    // no endpoint desta implantação. As demais séries usam no máximo 20.
+    const [cdiAnnualRows,cdiDailyRows,selicRows,ipcaRows] = await Promise.all([
+      getLast(4389,20),
+      getLast(12,20),
+      getLast(432,10),
+      getLast(433,12)
     ]);
-    if (!cdiDailySeries.length) throw new Error("Sem observações válidas de CDI diário.");
-    if (!selicSeries.length) throw new Error("Sem observações válidas de Selic após filtrar datas futuras.");
-    if (ipcaSeries.length < 12) throw new Error("Histórico insuficiente para IPCA acumulado em 12 meses.");
+    if (!cdiDailyRows.length) throw new Error("SGS 12 não retornou CDI diário válido.");
+    if (!selicRows.length) throw new Error("SGS 432 não retornou observações válidas até hoje.");
+    if (ipcaRows.length < 12) throw new Error(`SGS 433 retornou apenas ${ipcaRows.length} meses; são necessários 12.`);
 
-    const cdiDaily = cdiDailySeries[cdiDailySeries.length - 1];
-    const cdiAnnualFromDaily = (Math.pow(1 + cdiDaily.value / 100, 252) - 1) * 100;
-    const cdiAnnualPublished = cdiAnnualSeries.length ? cdiAnnualSeries[cdiAnnualSeries.length - 1] : null;
-    const cdiDifference = cdiAnnualPublished ? Math.abs(cdiAnnualFromDaily - cdiAnnualPublished.value) : null;
-    const selic = selicSeries[selicSeries.length - 1];
-    const ipca12 = ipcaSeries.slice(-12);
-    const ipca12mPercent = compoundPercent(ipca12.map(row => row.value));
+    const daily = cdiDailyRows.at(-1);
+    const cdiAnnualFromDaily = (Math.pow(1+daily.value/100,252)-1)*100;
+    const annualPublished = cdiAnnualRows.at(-1) || null;
+    const diff = annualPublished ? Math.abs(cdiAnnualFromDaily-annualPublished.value) : null;
+    const selic = selicRows.at(-1);
+    const ipca12 = ipcaRows.slice(-12);
 
-    const payload = {
-      ok: true,
-      source: "Banco Central do Brasil — SGS",
-      updatedAt: new Date().toISOString(),
-      indicators: {
-        cdiAnnualPercent: cdiAnnualFromDaily,
-        cdiDate: cdiDaily.date,
-        cdiDailyPercent: cdiDaily.value,
-        cdiDailyDate: cdiDaily.date,
-        cdiAnnualPublishedPercent: cdiAnnualPublished ? cdiAnnualPublished.value : null,
-        cdiAnnualPublishedDate: cdiAnnualPublished ? cdiAnnualPublished.date : null,
-        cdiConsistent: cdiDifference === null ? null : cdiDifference <= 0.03,
-        cdiDifferencePp: cdiDifference,
-        selicMetaPercent: selic.value,
-        selicDate: selic.date,
-        ipca12mPercent,
-        ipcaDateStart: ipca12[0].date,
-        ipcaDateEnd: ipca12[ipca12.length - 1].date,
-        ipcaMonthlyObservations: ipca12
+    const result = {
+      ok:true,
+      source:"Banco Central do Brasil — SGS",
+      updatedAt:new Date().toISOString(),
+      indicators:{
+        cdiAnnualPercent:cdiAnnualFromDaily,
+        cdiDate:daily.date,
+        cdiDailyPercent:daily.value,
+        cdiDailyDate:daily.date,
+        cdiAnnualPublishedPercent:annualPublished?.value ?? null,
+        cdiAnnualPublishedDate:annualPublished?.date ?? null,
+        cdiConsistent:diff===null?null:diff<=0.03,
+        cdiDifferencePp:diff,
+        selicMetaPercent:selic.value,
+        selicDate:selic.date,
+        ipca12mPercent:compoundPct(ipca12.map(x=>x.value)),
+        ipcaDateStart:ipca12[0].date,
+        ipcaDateEnd:ipca12.at(-1).date,
+        ipcaMonthlyObservations:ipca12
       },
-      methodology: {
-        cdi: "SGS 12: última taxa diária válida, anualizada por (1 + taxa diária)^252 - 1. SGS 4389 é mantida como conferência.",
-        selic: "SGS 432: última observação com data não posterior à data atual de São Paulo.",
-        ipca: "SGS 433: acumulado de 12 meses calculado por composição geométrica dos 12 últimos meses publicados."
+      diagnostics:{
+        requestedCounts:{cdiAnnual:20,cdiDaily:20,selic:10,ipca:12},
+        returnedCounts:{cdiAnnual:cdiAnnualRows.length,cdiDaily:cdiDailyRows.length,selic:selicRows.length,ipca:ipcaRows.length},
+        selicLastRecords:selicRows.slice(-3)
+      },
+      methodology:{
+        cdi:"SGS 12 anualizado em 252 dias úteis; SGS 4389 usado como conferência.",
+        selic:"SGS 432, últimos 10 registros, filtrando datas posteriores à data atual de São Paulo.",
+        ipca:"SGS 433, composição geométrica dos últimos 12 meses."
       }
     };
     return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "public, max-age=900, s-maxage=1800, stale-while-revalidate=3600",
-        "Access-Control-Allow-Origin": "*"
+      statusCode:200,
+      headers:{
+        "Content-Type":"application/json; charset=utf-8",
+        "Cache-Control":"public, max-age=300, s-maxage=600, stale-while-revalidate=1800",
+        "Access-Control-Allow-Origin":"*"
       },
-      body: JSON.stringify(payload)
+      body:JSON.stringify(result)
     };
-  } catch (error) {
+  } catch(e) {
     return {
-      statusCode: 502,
-      headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
-      body: JSON.stringify({ ok: false, error: error.message, source: "Banco Central do Brasil — SGS" })
+      statusCode:502,
+      headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store"},
+      body:JSON.stringify({ok:false,error:e.message,source:"Banco Central do Brasil — SGS",updatedAt:new Date().toISOString()})
     };
   }
 };
