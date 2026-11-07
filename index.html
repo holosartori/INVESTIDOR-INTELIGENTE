@@ -22,7 +22,7 @@ footer{max-width:1180px;margin:auto;padding:0 20px 28px;color:var(--muted);font-
 </style></head>
 <body>
 <header>
- <div class="top"><div class="brand">INVESTIDOR <span>INTELIGENTE</span></div><div class="status">INDICADORES AUTOMÁTICOS • BCB</div></div>
+ <div class="top"><div class="brand">INVESTIDOR <span>INTELIGENTE</span></div><div class="status">INDICADORES AUTOMÁTICOS • BCB | VERSÃO 3.1</div></div>
  <h1>Invista com números.<br>Decida com clareza.</h1>
  <p>Indicadores oficiais do Banco Central, simulações de renda fixa e comparação de ofertas em um só lugar.</p>
 </header>
@@ -80,9 +80,9 @@ footer{max-width:1180px;margin:auto;padding:0 20px 28px;color:var(--muted);font-
   <li>Selic meta: BCB SGS série 432 (% a.a.), consultada por intervalo de datas até a data atual.</li>
   <li>IPCA: BCB SGS série 13522 (% acumulado em 12 meses), consultado diretamente no Banco Central.</li>
   <li>CDI de uma oferta: convertemos o CDI anualizado para taxa diária equivalente em 252 dias úteis, aplicamos o percentual contratado à taxa diária e anualizamos novamente.</li>
-  <li>LCI/LCA: sem IR para pessoa física, conforme regra tributária aplicável. CDB: imposto estimado sobre o ganho total; esta versão ainda não individualiza a tributação de cada aporte mensal.</li>
+  <li>LCI/LCA: sem IR para pessoa física, conforme regra tributária aplicável. CDB e demais títulos tributáveis: IR estimado por aporte, com alíquota regressiva conforme o prazo de cada lote.</li>
  </ul>
- <p class="note warning">Simulação educativa. Não inclui marcação a mercado, custódia, IOF, tarifas, spreads, reinvestimento a taxas futuras variáveis ou tributação individual de cada aporte. Confirme as condições da oferta antes de investir.</p>
+ <p class="note warning">Simulação educativa. Não inclui marcação a mercado, custódia, IOF, tarifas, spreads, reinvestimento a taxas futuras variáveis ou datas efetivas de aplicação/resgate para apuração fiscal definitiva. O IR por aporte usa permanência mensal aproximada convertida em dias corridos. Confirme as condições da oferta antes de investir.</p>
 </section>
 </main>
 <footer>Investidor Inteligente • Indicadores: Banco Central do Brasil — SGS. Os dados podem ter defasagem de publicação e não representam garantia de rentabilidade.</footer>
@@ -104,7 +104,35 @@ function fv(pv,pmt,annual,months){
  if(months<=0)return pv;
  return pv*Math.pow(1+m,months)+(Math.abs(m)<1e-12?pmt*months:pmt*(Math.pow(1+m,months)-1)/m);
 }
-function irRate(years){return years<=.5?.225:years<=1?.20:years<=2?.175:.15}
+function irRateByDays(days){
+ // Tabela regressiva de renda fixa: até 180d 22,5%; 181–360d 20%;
+ // 361–720d 17,5%; acima de 720d 15%.
+ if(days<=180)return .225;
+ if(days<=360)return .20;
+ if(days<=720)return .175;
+ return .15;
+}
+function simulateLots(initial,monthly,annualRate,months,taxable){
+ const monthlyRate=Math.pow(1+annualRate,1/12)-1;
+ const lots=[];
+ if(initial>0) lots.push({principal:initial,ageMonths:months,label:'Aporte inicial'});
+ for(let m=1;m<=months;m++){
+  if(monthly>0) lots.push({principal:monthly,ageMonths:months-m,label:'Aporte '+m});
+ }
+ let gross=0,tax=0;
+ const details=lots.map(lot=>{
+  const amount=lot.principal*Math.pow(1+monthlyRate,lot.ageMonths);
+  const gain=Math.max(0,amount-lot.principal);
+  // Aproximação de dias corridos a partir dos meses de permanência.
+  // Em operação real, o IR é calculado pelas datas efetivas de cada aplicação/resgate.
+  const days=Math.round(lot.ageMonths*365.2425/12);
+  const rate=taxable?irRateByDays(days):0;
+  const lotTax=gain*rate;
+  gross+=amount;tax+=lotTax;
+  return {...lot,amount,gain,days,irRate:rate,tax:lotTax,net:amount-lotTax};
+ });
+ return {gross,tax,net:gross-tax,details};
+}
 function cdiAnnualAtPercent(cdiAnnualPercent,contractPercent){
  const annualFactor=1+cdiAnnualPercent/100;
  const daily=Math.pow(annualFactor,1/252)-1;
@@ -122,11 +150,10 @@ function calc(){
  const cdi=num('cdi'),ipca=Number($('ipca').value)||0,invested=pv+pmt*months;
  $('totalInvested').textContent=brl(invested);
  const rows=offers.map(o=>{
-  const rate=annualRate(o,cdi,ipca),gross=fv(pv,pmt,rate,months);
-  // Estimativa simplificada: uma alíquota aplicada ao ganho agregado.
-  // Para cálculo fiscal exato, cada aporte deve ser tributado por sua própria data de aplicação.
-  const tax=o.type==='isento'?0:Math.max(0,gross-invested)*irRate(years);
-  return {...o,rate,gross,tax,net:gross-tax};
+  const rate=annualRate(o,cdi,ipca);
+  // Cada aporte é tratado como um lote independente, com prazo e alíquota próprios.
+  const lots=simulateLots(pv,pmt,rate,months,o.type!=='isento');
+  return {...o,rate,gross:lots.gross,tax:lots.tax,net:lots.net,lotDetails:lots.details};
  }).sort((a,b)=>b.net-a.net);
  $('results').innerHTML=rows.map((o,i)=>`<tr class="${i===0?'best':''}"><td><b>${o.name}</b>${i===0?' <span class="tag">Maior saldo</span>':''}</td><td>${pct(o.rate)} a.a.</td><td>${brl(o.gross)}</td><td>${brl(o.tax)}</td><td><b>${brl(o.net)}</b></td></tr>`).join('');
  $('bestValue').textContent=brl(rows[0].net);

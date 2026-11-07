@@ -1,18 +1,16 @@
-# Patch 2.7 — Selic por intervalo de datas
+# Investidor Inteligente — versão 3.1
 
-Substitua apenas `netlify/functions/indicadores.js` no GitHub.
+## Instalação
+Substitua o `index.html` atual pelo arquivo deste pacote. Mantenha `netlify/functions/indicadores.js` e `netlify.toml` inalterados.
 
-Mudança principal:
-- A série 432 deixa de usar `/dados/ultimos/N`.
-- Passa a usar `/dados?formato=json&dataInicial=...&dataFinal=...`.
-- O fim do intervalo é calculado no fuso America/Sao_Paulo e é exatamente a data atual.
-- A janela consultada é de 60 dias, suficiente para capturar a última taxa mesmo em feriados e finais de semana.
-- Os demais indicadores continuam com a lógica já corrigida: CDI 12/4389 e IPCA 13522.
+## Alteração principal
+O cálculo do IR agora é feito lote a lote:
+- aporte inicial: prazo completo;
+- cada aporte mensal: prazo restante até o fim da simulação;
+- alíquota regressiva estimada por prazo: até 180 dias 22,5%; 181–360 dias 20%; 361–720 dias 17,5%; acima de 720 dias 15%;
+- LCI/LCA continuam com IR zero para pessoa física, conforme regra aplicável.
 
-Após deploy, teste:
-https://calculadorainvesti.netlify.app/.netlify/functions/indicadores
+## Limitação importante
+Como a simulação usa aportes mensais e não datas de calendário informadas pelo usuário, o prazo de cada lote é convertido de meses em dias corridos médios (365,2425/12). O cálculo é uma estimativa. Para apuração exata, usar datas efetivas de aplicação e resgate, regras do produto e legislação vigente.
 
-Verifique:
-- `ok: true`
-- `indicators.selicDate` não posterior a `diagnostics.todaySaoPaulo`
-- `diagnostics.selicQueryEnd` igual à data atual de São Paulo.
+O backend de indicadores BCB não foi alterado.
