@@ -1,4 +1,5 @@
 // Netlify Function — indicadores do Banco Central (SGS)
+// IMPORTANTE: o endpoint /ultimos/N aceita no máximo 20 observações.
 // SGS 4389: CDI anualizado (% a.a., base 252)
 // SGS 12: CDI diário (% a.d.)
 // SGS 432: meta Selic (% a.a.)
@@ -10,18 +11,19 @@ function parseSgsDate(dateText) {
   const [day, month, year] = dateText.split("/");
   return `${year}-${month.padStart(2,"0")}-${day.padStart(2,"0")}`;
 }
-
 function todaySaoPaulo() {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo",
-    year: "numeric", month: "2-digit", day: "2-digit"
+    timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit"
   }).format(new Date());
 }
-
-async function lastValues(code, count) {
-  const url = `${BASE}.${code}/dados/ultimos/${count}?formato=json`;
+async function lastValues(code, count = 20) {
+  const safeCount = Math.min(20, Math.max(1, count));
+  const url = `${BASE}.${code}/dados/ultimos/${safeCount}?formato=json`;
   const response = await fetch(url, { headers: { "Accept": "application/json" } });
-  if (!response.ok) throw new Error(`BCB SGS ${code}: HTTP ${response.status}`);
+  if (!response.ok) {
+    const details = await response.text().catch(() => "");
+    throw new Error(`BCB SGS ${code}: HTTP ${response.status}${details ? " — " + details.slice(0,180) : ""}`);
+  }
   const data = await response.json();
   if (!Array.isArray(data)) throw new Error(`BCB SGS ${code}: resposta inválida`);
   const today = todaySaoPaulo();
@@ -29,37 +31,29 @@ async function lastValues(code, count) {
     date: row.data,
     isoDate: parseSgsDate(row.data),
     value: Number(String(row.valor).replace(",", "."))
-  })).filter(row =>
-    Number.isFinite(row.value) && row.isoDate <= today
-  ).sort((a,b) => a.isoDate.localeCompare(b.isoDate));
+  })).filter(row => Number.isFinite(row.value) && row.isoDate <= today)
+    .sort((a,b) => a.isoDate.localeCompare(b.isoDate));
 }
-
 function compoundPercent(monthlyRates) {
   return (monthlyRates.reduce((factor, rate) => factor * (1 + rate / 100), 1) - 1) * 100;
 }
-
 exports.handler = async function () {
   try {
+    // Limite oficial/técnico do endpoint /ultimos/N: N máximo 20.
     const [cdiAnnualSeries, cdiDailySeries, selicSeries, ipcaSeries] = await Promise.all([
       lastValues(4389, 20),
       lastValues(12, 20),
-      lastValues(432, 30),
+      lastValues(432, 20), // corrigido: anteriormente era 30 e provocava HTTP 400
       lastValues(433, 15)
     ]);
-
     if (!cdiDailySeries.length) throw new Error("Sem observações válidas de CDI diário.");
     if (!selicSeries.length) throw new Error("Sem observações válidas de Selic após filtrar datas futuras.");
     if (ipcaSeries.length < 12) throw new Error("Histórico insuficiente para IPCA acumulado em 12 meses.");
 
     const cdiDaily = cdiDailySeries[cdiDailySeries.length - 1];
     const cdiAnnualFromDaily = (Math.pow(1 + cdiDaily.value / 100, 252) - 1) * 100;
-    const cdiAnnualPublished = cdiAnnualSeries.length
-      ? cdiAnnualSeries[cdiAnnualSeries.length - 1]
-      : null;
-    const cdiDifference = cdiAnnualPublished
-      ? Math.abs(cdiAnnualFromDaily - cdiAnnualPublished.value)
-      : null;
-
+    const cdiAnnualPublished = cdiAnnualSeries.length ? cdiAnnualSeries[cdiAnnualSeries.length - 1] : null;
+    const cdiDifference = cdiAnnualPublished ? Math.abs(cdiAnnualFromDaily - cdiAnnualPublished.value) : null;
     const selic = selicSeries[selicSeries.length - 1];
     const ipca12 = ipcaSeries.slice(-12);
     const ipca12mPercent = compoundPercent(ipca12.map(row => row.value));
@@ -69,7 +63,6 @@ exports.handler = async function () {
       source: "Banco Central do Brasil — SGS",
       updatedAt: new Date().toISOString(),
       indicators: {
-        // CDI exibido vem da taxa diária mais recente, anualizada em 252 dias úteis.
         cdiAnnualPercent: cdiAnnualFromDaily,
         cdiDate: cdiDaily.date,
         cdiDailyPercent: cdiDaily.value,
@@ -80,7 +73,7 @@ exports.handler = async function () {
         cdiDifferencePp: cdiDifference,
         selicMetaPercent: selic.value,
         selicDate: selic.date,
-        ipca12mPercent: ipca12mPercent,
+        ipca12mPercent,
         ipcaDateStart: ipca12[0].date,
         ipcaDateEnd: ipca12[ipca12.length - 1].date,
         ipcaMonthlyObservations: ipca12
@@ -91,7 +84,6 @@ exports.handler = async function () {
         ipca: "SGS 433: acumulado de 12 meses calculado por composição geométrica dos 12 últimos meses publicados."
       }
     };
-
     return {
       statusCode: 200,
       headers: {
