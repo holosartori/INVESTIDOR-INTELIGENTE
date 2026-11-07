@@ -1,22 +1,18 @@
-# Patch 2.6 — correção definitiva do formato de data
+# Patch 2.7 — Selic por intervalo de datas
 
-A causa provável do erro de Selic é a comparação de datas no runtime do Netlify.
+Substitua apenas `netlify/functions/indicadores.js` no GitHub.
 
-O código anterior usava:
-`new Intl.DateTimeFormat("en-CA", ...).format(new Date())`
-presumindo que o resultado seria sempre `YYYY-MM-DD`. Isso não é garantido em todos os ambientes. Se o runtime devolver `11/07/2026`, a comparação lexicográfica com datas `2026-...` elimina todos os registros.
+Mudança principal:
+- A série 432 deixa de usar `/dados/ultimos/N`.
+- Passa a usar `/dados?formato=json&dataInicial=...&dataFinal=...`.
+- O fim do intervalo é calculado no fuso America/Sao_Paulo e é exatamente a data atual.
+- A janela consultada é de 60 dias, suficiente para capturar a última taxa mesmo em feriados e finais de semana.
+- Os demais indicadores continuam com a lógica já corrigida: CDI 12/4389 e IPCA 13522.
 
-Este patch usa `formatToParts()` e monta explicitamente `YYYY-MM-DD`, evitando dependência do formato localizado.
-
-Também inclui diagnóstico:
-- `todaySaoPaulo`
-- `selicLatestReturned`
-- `validSelicRecords`
-
-## Instalação
-Substitua somente `netlify/functions/indicadores.js` pelo arquivo do pacote. Commit e aguarde o deploy.
-
-Teste:
+Após deploy, teste:
 https://calculadorainvesti.netlify.app/.netlify/functions/indicadores
 
-Se houver falha, o erro agora mostrará a data calculada e o último registro recebido para a Selic.
+Verifique:
+- `ok: true`
+- `indicators.selicDate` não posterior a `diagnostics.todaySaoPaulo`
+- `diagnostics.selicQueryEnd` igual à data atual de São Paulo.
