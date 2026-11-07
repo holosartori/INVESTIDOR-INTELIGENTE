@@ -1,24 +1,22 @@
-# Patch 2.5 — IPCA direto pela série SGS 13522
+# Patch 2.6 — correção definitiva do formato de data
 
-O endpoint da SGS 433 está retornando HTTP 304 repetidamente nesta implantação. Para não depender de uma série mensal e de composição local, este patch passa a usar a série oficial SGS 13522, cuja descrição é "IPCA — em 12 meses".
+A causa provável do erro de Selic é a comparação de datas no runtime do Netlify.
 
-Vantagens:
-- O Banco Central já publica o IPCA acumulado em 12 meses.
-- O campo `ipca12mPercent` recebe diretamente um número.
-- Remove a consulta à SGS 433 que estava falhando.
-- Mantém CDI, Selic, filtro de datas futuras e diagnóstico de quantidade de registros.
+O código anterior usava:
+`new Intl.DateTimeFormat("en-CA", ...).format(new Date())`
+presumindo que o resultado seria sempre `YYYY-MM-DD`. Isso não é garantido em todos os ambientes. Se o runtime devolver `11/07/2026`, a comparação lexicográfica com datas `2026-...` elimina todos os registros.
+
+Este patch usa `formatToParts()` e monta explicitamente `YYYY-MM-DD`, evitando dependência do formato localizado.
+
+Também inclui diagnóstico:
+- `todaySaoPaulo`
+- `selicLatestReturned`
+- `validSelicRecords`
 
 ## Instalação
-Substitua apenas `netlify/functions/indicadores.js` no GitHub pelo arquivo deste pacote. Faça commit e aguarde o deploy.
+Substitua somente `netlify/functions/indicadores.js` pelo arquivo do pacote. Commit e aguarde o deploy.
 
 Teste:
 https://calculadorainvesti.netlify.app/.netlify/functions/indicadores
 
-Resultado esperado:
-- `ok: true`
-- `indicators.ipca12mPercent`: número, próximo de 4.58 para a referência set/2026 que apareceu no retorno anterior.
-- `indicators.ipcaDate`: mês de referência da série 13522.
-- `diagnostics.ipcaSourceSeries`: 13522.
-
-Fonte oficial da série 13522:
-https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarSeries&series=13522
+Se houver falha, o erro agora mostrará a data calculada e o último registro recebido para a Selic.
