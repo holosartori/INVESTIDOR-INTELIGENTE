@@ -1,27 +1,14 @@
-# Investidor Inteligente Pro — versão 4.0
+# Investidor Inteligente Pro — Patch 4.1 (correções pós-teste)
 
-## Publicação em uma única atualização
-Substitua somente o `index.html` no GitHub pelo arquivo deste pacote. Mantenha a pasta `netlify/functions/` e o `netlify.toml` atuais. A integração com o BCB não foi alterada.
+Substitua somente `index.html` pelo arquivo deste pacote. Mantenha `netlify/functions/indicadores.js` e `netlify.toml` inalterados.
 
-## Recursos
-- Indicadores CDI, Selic e IPCA via função Netlify existente.
-- Datas de investimento inicial, aportes mensais e resgate.
-- Cálculo por lote, com dias corridos reais entre datas.
-- CDI projetado com dias úteis de segunda a sexta (sem calendário de feriados).
-- Prefixado e IPCA+ capitalizados por dias corridos.
-- IR regressivo por lote.
-- IOF regressivo nos resgates até 29 dias.
-- Comparação de CDB, LCI, LCA, prefixado e IPCA+.
-- Ganho real estimado e demonstrativo por aporte.
-- Exportação do demonstrativo para CSV.
+Correções:
+1. Datas do SGS chegam como `DD/MM/YYYY`; a versão anterior passava esse texto diretamente para `new Date()`, gerando "Invalid Date". O formatador agora reconhece `DD/MM/YYYY` e `YYYY-MM-DD`.
+2. LCI e LCA pós-fixadas agora capitalizam usando a taxa diária do CDI multiplicada pelo percentual contratado. Na 4.0, os tipos `lci` e `lca` caíam no ramo de prefixado/IPCA e rendiam zero.
+3. Ganho real corrigido: compara o saldo líquido com o valor corrigido pela inflação de cada aporte, desde a data da aplicação até o resgate, em vez de deflacionar o saldo inteiro e subtrair aportes nominais.
+4. Mantém cálculo por lote, IR/IOF estimados, exportação CSV e conexão BCB existente.
 
-## Premissas e limites importantes
-- A taxa CDI, IPCA e demais taxas permanecem constantes durante toda a projeção.
-- A contagem de dias úteis exclui fins de semana, mas não feriados.
-- O simulador não modela carência, liquidez, marcação a mercado, spreads, taxas, eventos de crédito nem regras específicas de cada emissor.
-- A tributação segue uma estimativa geral da tabela regressiva de renda fixa e IOF; confirme o enquadramento do produto e a legislação vigente.
-- Para LCI/LCA, o modelo considera isenção de IR para pessoa física, mas não avalia elegibilidade, carência ou restrições de resgate.
-- O ganho real mostrado é uma estimativa: saldo líquido deflacionado pelo IPCA projetado ao longo do prazo total menos os aportes nominais. Não é uma TIR real ponderada por fluxo de caixa.
-
-## Validação pré-publicação
-O JavaScript foi verificado sintaticamente. Antes de publicar, teste os campos de data, aporte mensal zero/positivo, resgate curto e longo, CSV e a resposta da função BCB existente.
+Validação:
+- JavaScript verificado sintaticamente.
+- Teste aritmético de LCI 95% CDI: taxa anual equivalente calculada pela capitalização da taxa DI diária.
+- Antes de investir, confirme as condições reais de carência, liquidez, tributação e calendário de dias úteis.
