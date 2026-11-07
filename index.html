@@ -27,11 +27,80 @@ h2{font-size:18px;margin:0 0 4px}h3{font-size:14px;margin:0 0 9px}.sub{color:var
 footer{max-width:1220px;margin:auto;padding:0 18px 28px;color:var(--muted);font-size:11px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.indicators{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.kpis{grid-template-columns:1fr 1fr}.card{padding:14px}header{padding:20px}}
+
+/* RESPONSIVIDADE 4.1 — ajustes de layout para celular, tablet e desktop */
+html { width:100%; max-width:100%; overflow-x:hidden; }
+body { width:100%; min-width:320px; overflow-x:hidden; }
+header, main, footer { width:100%; min-width:0; }
+header { padding-left:max(16px,calc((100vw - 1220px)/2)); padding-right:max(16px,calc((100vw - 1220px)/2)); }
+main { min-width:0; }
+.layout, .layout > *, .card, .section, .head, .fields, .field { min-width:0; }
+.layout > section, .layout > div { min-width:0; }
+.wrap, .detail-table { display:block; width:100%; max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; }
+.wrap table, .detail-table table { min-width:700px; width:100%; }
+.detail-table { max-height:360px; }
+.chartbox { min-width:0; overflow:hidden; }
+.chartbox canvas { width:100%; max-width:100%; height:clamp(155px,28vw,220px); }
+.btn { min-height:42px; }
+input, select, button { max-width:100%; }
+.indicator, .kpi { min-width:0; overflow-wrap:anywhere; }
+.indicator b, .kpi strong { overflow-wrap:anywhere; }
+.note, .sub, li { overflow-wrap:anywhere; }
+@media (max-width: 1024px) {
+  main { margin-top:18px; }
+  .layout { grid-template-columns:minmax(0, 1fr); }
+  .layout > section, .layout > div { width:100%; }
+  .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 700px) {
+  header { padding:20px 16px 22px; }
+  .top { align-items:flex-start; flex-direction:column; gap:9px; }
+  .brand { font-size:17px; }
+  .pill { white-space:normal; line-height:1.4; }
+  header h1 { font-size:clamp(25px,7vw,34px); margin:20px 0 9px; }
+  header p { font-size:13px; }
+  main { padding:0 12px 30px; margin:14px auto; }
+  footer { padding:0 12px 22px; }
+  .card { padding:14px; border-radius:12px; }
+  .indicators { grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+  .indicator { padding:9px 8px; }
+  .indicator b { font-size:clamp(15px,3.7vw,19px); }
+  .indicator small { font-size:9px; line-height:1.3; }
+  .indicator span { font-size:10px; }
+  .head { align-items:stretch; }
+  .head > div { flex:1 1 100%; }
+  .head > button { width:100%; }
+  .fields { grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 9px; }
+  .field.full { grid-column:1/-1; }
+  .field input, .field select { min-width:0; padding:10px 8px; font-size:14px; }
+  .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+  .kpi { padding:10px; }
+  .kpi strong { font-size:16px; }
+  .chartbox { padding:9px; }
+  .details summary { line-height:1.4; }
+  .tabs button { max-width:100%; }
+}
+@media (max-width: 420px) {
+  .indicators { grid-template-columns:1fr; }
+  .indicator { display:grid; grid-template-columns:1fr auto; align-items:center; column-gap:8px; }
+  .indicator small { grid-column:1; }
+  .indicator b { grid-column:2; grid-row:1 / span 2; text-align:right; }
+  .indicator span { grid-column:1; }
+  .fields { grid-template-columns:minmax(0,1fr); }
+  .field.full { grid-column:auto; }
+  .kpis { grid-template-columns:minmax(0,1fr); }
+  .kpi { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .kpi strong { text-align:right; margin:0; }
+  .section { margin-top:13px; }
+  .card { padding:12px; }
+  h2 { font-size:17px; }
+}
+
 </style>
 </head>
 <body>
 <header>
- <div class="top"><div class="brand">INVESTIDOR <span>INTELIGENTE PRO</span></div><div class="pill">VERSÃO 4.0 • INDICADORES AUTOMÁTICOS BCB</div></div>
+ <div class="top"><div class="brand">INVESTIDOR <span>INTELIGENTE PRO</span></div><div class="pill">VERSÃO 4.1 • LAYOUT RESPONSIVO • INDICADORES BCB</div></div>
  <h1>Invista com números.<br>Decida com clareza.</h1>
  <p>Simulação avançada de renda fixa, tributação por aporte, rentabilidade real e comparação de cenários com indicadores oficiais.</p>
 </header>
