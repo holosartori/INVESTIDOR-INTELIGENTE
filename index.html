@@ -2,207 +2,229 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Investidor Inteligente | Simulador de Renda Fixa</title>
+<meta name="theme-color" content="#142b4a">
+<title>Investidor Inteligente Pro | Simulador de Renda Fixa</title>
 <style>
-:root{--bg:#f4f7fb;--card:#fff;--ink:#172338;--muted:#68758a;--line:#e4eaf2;--navy:#142b4a;--blue:#2864a5;--green:#13795b;--red:#a33b3b}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{background:linear-gradient(120deg,#102541,#1b456b);color:white;padding:25px max(22px,calc((100vw - 1180px)/2))}
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-size:20px;font-weight:800;letter-spacing:.3px}.brand span{color:#7ed6c7}.status{font-size:12px;border:1px solid #52708e;padding:6px 10px;border-radius:30px}
-header h1{font-size:clamp(25px,4vw,38px);line-height:1.12;margin:25px 0 8px}header p{color:#d4e0ed;margin:0;max-width:700px}
-main{max-width:1180px;margin:25px auto;padding:0 20px 48px}.layout{display:grid;grid-template-columns:340px 1fr;gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 12px 32px #162b480c}
-h2{font-size:18px;margin:0 0 4px}.sub{color:var(--muted);font-size:13px;margin:0 0 16px}.field{margin:13px 0}.field label{display:block;font-size:12px;font-weight:700;color:#526078;margin-bottom:6px}.field input{width:100%;border:1px solid #d8e0eb;border-radius:9px;padding:10px 11px;font:inherit}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:0;background:var(--blue);color:white;border-radius:10px;padding:11px 14px;font-weight:750;cursor:pointer}.btn.secondary{background:#eaf1f8;color:var(--navy);border:1px solid #d8e4f0}.btn:disabled{opacity:.6;cursor:wait}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.kpi{padding:14px;background:#f8fafc;border:1px solid var(--line);border-radius:12px}.kpi small{display:block;color:var(--muted);font-size:11px;font-weight:700}.kpi strong{display:block;font-size:20px;margin-top:5px}.green{color:var(--green)}
-table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{font-size:11px;color:#627087;background:#f7f9fc;text-transform:uppercase}.best{background:#edf8f3}.wrap{overflow-x:auto}.tag{display:inline-block;border-radius:30px;padding:3px 8px;background:#e8f3f2;color:#126b65;font-size:11px;font-weight:700}
-.note{font-size:12px;color:var(--muted);background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:13px}.warning{background:#fff4d6;border-color:#f1dfae;color:#74581b}.good{background:#eaf7f0;border-color:#cce8d8;color:#176443}.bad{background:#fff0f0;border-color:#f0cccc;color:#8b3030}
-.indicators{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.indicator{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:12px}.indicator small{display:block;color:var(--muted);font-size:11px;font-weight:700}.indicator b{font-size:20px;display:block;margin:4px 0}.indicator span{font-size:11px;color:var(--muted)}
-.chartbox{border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:16px}.chartbox canvas{width:100%;height:190px;display:block}.section{margin-top:18px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
-footer{max-width:1180px;margin:auto;padding:0 20px 28px;color:var(--muted);font-size:12px}
-@media(max-width:850px){.layout{grid-template-columns:1fr}.kpis,.indicators{grid-template-columns:1fr}}@media(max-width:480px){.two{grid-template-columns:1fr}.card{padding:15px}.top{align-items:flex-start;flex-direction:column}}
-</style></head>
+:root{--bg:#f3f6fa;--card:#fff;--ink:#172338;--muted:#68758a;--line:#e2e8f0;--navy:#142b4a;--blue:#2864a5;--green:#13795b;--red:#a33b3b;--gold:#a36b12}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:linear-gradient(120deg,#102541,#1b456b);color:white;padding:25px max(20px,calc((100vw - 1220px)/2))}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.brand{font-size:19px;font-weight:850;letter-spacing:.5px}.brand span{color:#7ed6c7}.pill{font-size:11px;border:1px solid #6b849d;padding:5px 10px;border-radius:30px;letter-spacing:.5px}
+header h1{font-size:clamp(26px,4vw,39px);line-height:1.1;margin:24px 0 8px}header p{color:#d4e0ed;margin:0;max-width:760px}
+main{max-width:1220px;margin:24px auto;padding:0 18px 45px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:0 10px 28px #162b4809}
+h2{font-size:18px;margin:0 0 4px}h3{font-size:14px;margin:0 0 9px}.sub{color:var(--muted);font-size:12px;margin:0 0 14px}
+.section{margin-top:17px}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.indicators{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.indicator{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:12px}.indicator small,.kpi small{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.5px}.indicator b{display:block;font-size:21px;margin:4px 0}.indicator span{font-size:11px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:350px 1fr;gap:17px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:0 11px}.field{margin:9px 0}.field.full{grid-column:1/-1}.field label{display:block;font-size:11px;font-weight:800;color:#536176;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid #d6deea;border-radius:8px;padding:9px 10px;font:inherit;background:white;color:var(--ink)}.hint{font-size:10px;color:var(--muted);margin-top:4px}
+.btn{border:0;background:var(--blue);color:white;border-radius:9px;padding:10px 14px;font-weight:750;cursor:pointer}.btn.secondary{background:#edf2f8;color:var(--navy);border:1px solid #dbe4ef}.btn.small{padding:7px 10px;font-size:12px}.btn:disabled{opacity:.6;cursor:wait}
+.note{font-size:11px;color:var(--muted);background:#f8fafc;border:1px solid var(--line);border-radius:9px;padding:11px;margin-top:11px}.good{background:#eaf7f0;border-color:#cce8d8;color:#176443}.bad{background:#fff0f0;border-color:#f0cccc;color:#8b3030}.warn{background:#fff7e6;border-color:#f0dfb6;color:#76571b}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}.kpi{padding:12px;background:#f8fafc;border:1px solid var(--line);border-radius:11px}.kpi strong{display:block;font-size:18px;margin-top:5px}.green{color:var(--green)}
+.wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{font-size:10px;color:#627087;background:#f7f9fc;text-transform:uppercase}td:first-child,th:first-child{text-align:left}.best{background:#edf8f3}.tag{display:inline-block;border-radius:30px;padding:2px 7px;background:#e5f2ed;color:#126b55;font-size:10px;font-weight:800}
+.chartbox{border:1px solid var(--line);border-radius:11px;padding:12px;margin-top:14px}.chartbox canvas{width:100%;height:200px;display:block}
+.details{margin-top:14px}.details summary{cursor:pointer;font-weight:750;color:var(--blue);padding:8px 0}.detail-table{max-height:330px;overflow:auto}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.tabs button{border:1px solid var(--line);background:white;color:var(--muted);padding:7px 11px;border-radius:30px;cursor:pointer;font-size:11px}.tabs button.active{background:var(--navy);color:white}
+.legend{font-size:11px;color:var(--muted);display:flex;gap:13px;flex-wrap:wrap;margin-top:7px}
+footer{max-width:1220px;margin:auto;padding:0 18px 28px;color:var(--muted);font-size:11px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.indicators{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.kpis{grid-template-columns:1fr 1fr}.card{padding:14px}header{padding:20px}}
+</style>
+</head>
 <body>
 <header>
- <div class="top"><div class="brand">INVESTIDOR <span>INTELIGENTE</span></div><div class="status">INDICADORES AUTOMÁTICOS • BCB | VERSÃO 3.1</div></div>
+ <div class="top"><div class="brand">INVESTIDOR <span>INTELIGENTE PRO</span></div><div class="pill">VERSÃO 4.0 • INDICADORES AUTOMÁTICOS BCB</div></div>
  <h1>Invista com números.<br>Decida com clareza.</h1>
- <p>Indicadores oficiais do Banco Central, simulações de renda fixa e comparação de ofertas em um só lugar.</p>
+ <p>Simulação avançada de renda fixa, tributação por aporte, rentabilidade real e comparação de cenários com indicadores oficiais.</p>
 </header>
 <main>
 <section class="card">
- <div class="section-head"><div><h2>Indicadores econômicos</h2><p class="sub" style="margin:4px 0 0">Consulta automática ao Banco Central do Brasil (SGS).</p></div><button class="btn secondary" id="refresh">Atualizar agora</button></div>
+ <div class="head"><div><h2>Indicadores econômicos</h2><p class="sub" style="margin:4px 0 0">Consulta automática ao Banco Central do Brasil (SGS).</p></div><button class="btn secondary" id="refresh">Atualizar agora</button></div>
  <div class="indicators">
   <div class="indicator"><small>CDI ANUALIZADO</small><b id="cdiDisplay">—</b><span id="cdiDate">Aguardando consulta</span></div>
   <div class="indicator"><small>SELIC META</small><b id="selicDisplay">—</b><span id="selicDate">Aguardando consulta</span></div>
   <div class="indicator"><small>IPCA ACUMULADO 12M</small><b id="ipcaDisplay">—</b><span id="ipcaDate">Aguardando consulta</span></div>
- </div>
- <div id="apiStatus" class="note">Carregando indicadores oficiais...</div>
+ </div><div id="apiStatus" class="note">Carregando indicadores...</div>
 </section>
 
 <div class="layout section" id="simulador">
  <section class="card">
-  <h2>Parâmetros da simulação</h2>
-  <p class="sub">Os campos CDI e IPCA são preenchidos pelos indicadores oficiais. Você pode alterá-los manualmente.</p>
-  <div class="field"><label for="initial">INVESTIMENTO INICIAL (R$)</label><input id="initial" type="number" min="0" step="100" value="5000"></div>
-  <div class="field"><label for="monthly">APORTE MENSAL (R$)</label><input id="monthly" type="number" min="0" step="50" value="500"></div>
-  <div class="two">
-   <div class="field"><label for="years">PRAZO (ANOS)</label><input id="years" type="number" min=".1" max="50" step=".5" value="5"></div>
-   <div class="field"><label for="cdi">CDI ANUAL (%)</label><input id="cdi" type="number" min="0" max="100" step=".001" value="13.65"></div>
+  <h2>Parâmetros da simulação</h2><p class="sub">Configure os aportes, as datas e as taxas contratadas. Os indicadores oficiais podem ser ajustados manualmente para cenários hipotéticos.</p>
+  <div class="fields">
+   <div class="field full"><label for="startDate">DATA DO INVESTIMENTO INICIAL</label><input id="startDate" type="date"></div>
+   <div class="field"><label for="initial">INVESTIMENTO INICIAL (R$)</label><input id="initial" type="number" min="0" step="100" value="5000"></div>
+   <div class="field"><label for="monthly">APORTE MENSAL (R$)</label><input id="monthly" type="number" min="0" step="50" value="500"></div>
+   <div class="field"><label for="monthlyDay">DIA DOS APORTES</label><input id="monthlyDay" type="number" min="1" max="28" value="7"><div class="hint">Dia fixo de cada mês (1 a 28).</div></div>
+   <div class="field"><label for="endDate">DATA DO RESGATE</label><input id="endDate" type="date"></div>
+   <div class="field"><label for="cdi">CDI ANUAL (% a.a.)</label><input id="cdi" type="number" min="0" max="100" step=".001" value="13.65"></div>
+   <div class="field"><label for="ipca">IPCA PROJETADO (% a.a.)</label><input id="ipca" type="number" min="-10" max="100" step=".01" value="4.58"></div>
+   <div class="field"><label for="real">TAXA REAL IPCA+ (% a.a.)</label><input id="real" type="number" min="0" max="100" step=".01" value="7"></div>
+   <div class="field"><label for="cdbPct">CDB (% DO CDI)</label><input id="cdbPct" type="number" min="0" max="300" step=".1" value="110"></div>
+   <div class="field"><label for="lciPct">LCI (% DO CDI)</label><input id="lciPct" type="number" min="0" max="300" step=".1" value="95"></div>
+   <div class="field"><label for="lcaPct">LCA (% DO CDI)</label><input id="lcaPct" type="number" min="0" max="300" step=".1" value="92"></div>
+   <div class="field"><label for="prePct">PREFIXADO (% a.a.)</label><input id="prePct" type="number" min="0" max="100" step=".1" value="12"></div>
   </div>
-  <div class="two">
-   <div class="field"><label for="ipca">IPCA ANUAL (%)</label><input id="ipca" type="number" min="-10" max="100" step=".01" value="4.58"></div>
-   <div class="field"><label for="real">JURO REAL IPCA+ (%)</label><input id="real" type="number" min="0" max="100" step=".01" value="7"></div>
-  </div>
-  <button class="btn" style="width:100%" id="calculate">Calcular investimentos</button>
-  <div class="note warning">Para CDI, o percentual contratado incide sobre a taxa DI diária. A projeção anual equivalente é calculada por capitalização em 252 dias úteis.</div>
+  <button class="btn" id="calculate" style="width:100%;margin-top:8px">Calcular investimentos</button>
+  <button class="btn secondary" id="export" style="width:100%;margin-top:8px">Exportar demonstrativo CSV</button>
+  <div class="note warn">Premissas: CDI projetado constante e capitalizado em dias úteis de segunda a sexta (sem calendário de feriados); prefixado e IPCA+ capitalizados por dias corridos. A simulação não substitui a memória de cálculo da instituição emissora.</div>
  </section>
 
  <section>
   <div class="kpis">
    <div class="kpi"><small>TOTAL APORTADO</small><strong id="totalInvested">R$ 0,00</strong></div>
-   <div class="kpi"><small>MELHOR SALDO LÍQUIDO ESTIMADO</small><strong class="green" id="bestValue">R$ 0,00</strong></div>
-   <div class="kpi"><small>GANHO ESTIMADO</small><strong id="bestGain">R$ 0,00</strong></div>
+   <div class="kpi"><small>MELHOR SALDO LÍQUIDO</small><strong class="green" id="bestValue">R$ 0,00</strong></div>
+   <div class="kpi"><small>GANHO LÍQUIDO NOMINAL</small><strong id="bestGain">R$ 0,00</strong></div>
+   <div class="kpi"><small>GANHO REAL LÍQUIDO</small><strong id="realGain">R$ 0,00</strong></div>
   </div>
   <div class="card">
-   <h2>Comparação de cenários</h2><p class="sub">Taxas constantes como hipótese de projeção; não representam garantia.</p>
-   <div class="wrap"><table><thead><tr><th>Produto</th><th>Taxa anual equivalente</th><th>Saldo bruto</th><th>IR estimado</th><th>Saldo líquido</th></tr></thead><tbody id="results"></tbody></table></div>
-   <div class="chartbox"><b>Evolução estimada — LCI 95% do CDI</b><canvas id="chart" width="900" height="230" aria-label="Gráfico de evolução estimada"></canvas></div>
+   <h2>Comparação de cenários</h2><p class="sub">Tributação calculada individualmente por lote, com prazo em dias corridos e tabela regressiva de IR.</p>
+   <div class="wrap"><table><thead><tr><th>Produto</th><th>Taxa equivalente</th><th>Saldo bruto</th><th>IOF</th><th>IR</th><th>Saldo líquido</th><th>Ganho real</th></tr></thead><tbody id="results"></tbody></table></div>
+   <div class="chartbox"><b>Evolução estimada — LCI (% do CDI configurado)</b><canvas id="chart" width="1000" height="240"></canvas><div class="legend"><span>● Saldo bruto estimado</span><span>— Total aportado</span></div></div>
+   <details class="details"><summary>Ver demonstrativo individual dos aportes e impostos</summary><div class="tabs" id="lotTabs"></div><div class="detail-table wrap"><table><thead><tr><th>Aporte</th><th>Data</th><th>Dias</th><th>Valor aplicado</th><th>Rendimento</th><th>IOF</th><th>IR %</th><th>IR R$</th><th>Líquido</th></tr></thead><tbody id="lotRows"></tbody></table></div><p class="hint">O demonstrativo detalha os lotes do cenário selecionado. Para títulos tributáveis, IOF incide sobre o rendimento nos resgates antes de 30 dias; IR é aplicado após IOF. LCI/LCA permanecem sem IR/IOF nesta simulação, respeitada a carência contratual.</p></details>
   </div>
-  <div class="card section">
-   <h2>Ofertas comparadas</h2><p class="sub">Taxas configuráveis no código da aplicação.</p>
-   <div class="wrap"><table><thead><tr><th>Oferta</th><th>Tipo</th><th>Taxa contratada</th></tr></thead><tbody id="offers"></tbody></table></div>
-  </div>
+  <div class="card section"><h2>Comparação de ofertas</h2><p class="sub">Taxas configuráveis nos campos à esquerda.</p><div class="wrap"><table><thead><tr><th>Oferta</th><th>Tipo</th><th>Taxa contratada</th><th>Tributação</th></tr></thead><tbody id="offers"></tbody></table></div></div>
  </section>
 </div>
 
 <section class="card section">
- <h2>Fontes e metodologia</h2>
- <ul style="font-size:13px;color:#526078">
-  <li>CDI anualizado: BCB SGS série 4389 (% a.a., base 252), conferido com CDI diário SGS série 12 (% a.d.).</li>
-  <li>Selic meta: BCB SGS série 432 (% a.a.), consultada por intervalo de datas até a data atual.</li>
-  <li>IPCA: BCB SGS série 13522 (% acumulado em 12 meses), consultado diretamente no Banco Central.</li>
-  <li>CDI de uma oferta: convertemos o CDI anualizado para taxa diária equivalente em 252 dias úteis, aplicamos o percentual contratado à taxa diária e anualizamos novamente.</li>
-  <li>LCI/LCA: sem IR para pessoa física, conforme regra tributária aplicável. CDB e demais títulos tributáveis: IR estimado por aporte, com alíquota regressiva conforme o prazo de cada lote.</li>
+ <h2>Metodologia, premissas e limites</h2>
+ <ul style="font-size:12px;color:#526078;padding-left:19px">
+  <li>CDI: SGS 12 (% ao dia) anualizado em 252 dias úteis; SGS 4389 usado como conferência.</li>
+  <li>Selic meta: SGS 432 (% a.a.), consultada por intervalo de datas até a data atual.</li>
+  <li>IPCA: SGS 13522, indicador acumulado em 12 meses. O valor atual é usado como hipótese constante para projetar a inflação futura.</li>
+  <li>CDB/LCI/LCA atrelados ao CDI: a taxa DI diária equivalente é convertida e multiplicada pelo percentual contratado.</li>
+  <li>Prefixado: taxa efetiva anual capitalizada por dias corridos/365. IPCA+: inflação projetada composta com a taxa real contratada.</li>
+  <li>IR por lote: 22,5% até 180 dias; 20% de 181 a 360; 17,5% de 361 a 720; 15% acima de 720 dias. O prazo é contado entre a data do aporte e a data de resgate simulada.</li>
+  <li>IOF: aplicado sobre o rendimento tributável em resgates antes de 30 dias, conforme tabela regressiva diária. Após 30 dias, IOF zero.</li>
+  <li>Rentabilidade real: saldo líquido deflacionado pelo IPCA projetado no período, comparado ao total nominal aportado. É uma estimativa, pois os aportes ocorrem em datas diferentes.</li>
  </ul>
- <p class="note warning">Simulação educativa. Não inclui marcação a mercado, custódia, IOF, tarifas, spreads, reinvestimento a taxas futuras variáveis ou datas efetivas de aplicação/resgate para apuração fiscal definitiva. O IR por aporte usa permanência mensal aproximada convertida em dias corridos. Confirme as condições da oferta antes de investir.</p>
+ <div class="note warn"><b>Importante:</b> esta ferramenta é educativa. Não modela feriados bancários, convenções específicas de cada emissor, carência, liquidez, marcação a mercado, taxas, spreads, eventos de crédito ou mudanças futuras de CDI/IPCA. O cálculo de IR/IOF é uma estimativa baseada em regras gerais; valide o tratamento tributário e as condições do título antes de investir. LCI/LCA podem ter carência e regras de resgate que impedem a saída na data simulada.</div>
 </section>
 </main>
-<footer>Investidor Inteligente • Indicadores: Banco Central do Brasil — SGS. Os dados podem ter defasagem de publicação e não representam garantia de rentabilidade.</footer>
+<footer>Investidor Inteligente Pro • Indicadores: Banco Central do Brasil — SGS • Projeções hipotéticas não garantem rentabilidade futura.</footer>
 
 <script>
 const $=id=>document.getElementById(id);
-const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const pct=v=>(v*100).toFixed(2).replace('.',',')+'%';
-let offers=[
- {name:'LCI 95% do CDI',type:'isento',rate:95},
- {name:'LCA 92% do CDI',type:'isento',rate:92},
- {name:'CDB 110% do CDI',type:'cdb',rate:110},
- {name:'Prefixado 12% a.a.',type:'pre',rate:12},
- {name:'IPCA + 7% a.a.',type:'ipca',rate:7}
-];
-function num(id){return Math.max(0,Number($(id).value)||0)}
-function fv(pv,pmt,annual,months){
- const m=Math.pow(1+annual,1/12)-1;
- if(months<=0)return pv;
- return pv*Math.pow(1+m,months)+(Math.abs(m)<1e-12?pmt*months:pmt*(Math.pow(1+m,months)-1)/m);
+const brl=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const pct=v=>(Number(v||0)*100).toFixed(2).replace('.',',')+'%';
+const fmtDate=d=>d?new Date(d+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+let lastResults=[],selectedScenario=0;
+let offers=[];
+function localISO(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function addMonthsClamped(date,months,day){
+ const d=new Date(date+'T12:00:00');const target=new Date(d.getFullYear(),d.getMonth()+months,1,12);
+ const last=new Date(target.getFullYear(),target.getMonth()+1,0).getDate();
+ target.setDate(Math.min(day||d.getDate(),last));return localISO(target);
 }
-function irRateByDays(days){
- // Tabela regressiva de renda fixa: até 180d 22,5%; 181–360d 20%;
- // 361–720d 17,5%; acima de 720d 15%.
- if(days<=180)return .225;
- if(days<=360)return .20;
- if(days<=720)return .175;
- return .15;
+function daysBetween(a,b){return Math.max(0,Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000))}
+function businessDays(a,b){
+ let start=new Date(a+'T12:00:00'),end=new Date(b+'T12:00:00'),n=0;
+ for(let d=new Date(start);d<end;d.setDate(d.getDate()+1)){const w=d.getDay();if(w!==0&&w!==6)n++}
+ return n;
 }
-function simulateLots(initial,monthly,annualRate,months,taxable){
- const monthlyRate=Math.pow(1+annualRate,1/12)-1;
- const lots=[];
- if(initial>0) lots.push({principal:initial,ageMonths:months,label:'Aporte inicial'});
- for(let m=1;m<=months;m++){
-  if(monthly>0) lots.push({principal:monthly,ageMonths:months-m,label:'Aporte '+m});
- }
- let gross=0,tax=0;
- const details=lots.map(lot=>{
-  const amount=lot.principal*Math.pow(1+monthlyRate,lot.ageMonths);
-  const gain=Math.max(0,amount-lot.principal);
-  // Aproximação de dias corridos a partir dos meses de permanência.
-  // Em operação real, o IR é calculado pelas datas efetivas de cada aplicação/resgate.
-  const days=Math.round(lot.ageMonths*365.2425/12);
-  const rate=taxable?irRateByDays(days):0;
-  const lotTax=gain*rate;
-  gross+=amount;tax+=lotTax;
-  return {...lot,amount,gain,days,irRate:rate,tax:lotTax,net:amount-lotTax};
- });
- return {gross,tax,net:gross-tax,details};
+function irRate(days){if(days<=180)return .225;if(days<=360)return .20;if(days<=720)return .175;return .15}
+const IOF=[96,93,90,86,83,80,76,73,70,66,63,60,56,53,50,46,43,40,36,33,30,26,23,20,16,13,10,6,3];
+function iofRate(days){return days>=30?0:(IOF[Math.max(0,days-1)]||0)/100}
+function makeLots(){
+ const start=$('startDate').value,end=$('endDate').value,initial=Math.max(0,Number($('initial').value)||0),monthly=Math.max(0,Number($('monthly').value)||0),day=Math.max(1,Math.min(28,Number($('monthlyDay').value)||1));
+ const lots=[];if(initial>0)lots.push({label:'Inicial',date:start,principal:initial});
+ if(monthly>0){let idx=1;for(let d=addMonthsClamped(start,1,day);d<=end;d=addMonthsClamped(start,idx+1,day),idx++){lots.push({label:'Mensal '+idx,date:d,principal:monthly});if(idx>600)break}}
+ return lots.filter(x=>x.date<=end);
 }
-function cdiAnnualAtPercent(cdiAnnualPercent,contractPercent){
- const annualFactor=1+cdiAnnualPercent/100;
- const daily=Math.pow(annualFactor,1/252)-1;
- const contractedDaily=daily*(contractPercent/100);
- return Math.pow(1+contractedDaily,252)-1;
-}
-function annualRate(o,cdi,ipca){
- if(o.type==='isento'||o.type==='cdb')return cdiAnnualAtPercent(cdi,o.rate);
- if(o.type==='pre')return o.rate/100;
- if(o.type==='ipca')return (1+ipca/100)*(1+o.rate/100)-1;
+function cdiDailyRate(cdiAnnualPercent,contractPercent){const daily=Math.pow(1+cdiAnnualPercent/100,1/252)-1;return daily*contractPercent/100}
+function productAnnualRate(type,rate,cdi,ipca){
+ if(type==='cdi')return Math.pow(1+cdiDailyRate(cdi,rate),252)-1;
+ if(type==='pre')return rate/100;
+ if(type==='ipca')return (1+ipca/100)*(1+rate/100)-1;
  return 0;
 }
-function calc(){
- const pv=num('initial'),pmt=num('monthly'),years=Math.max(.1,Math.min(50,num('years'))),months=Math.round(years*12);
- const cdi=num('cdi'),ipca=Number($('ipca').value)||0,invested=pv+pmt*months;
- $('totalInvested').textContent=brl(invested);
+function growLot(lot,offer,cdi,ipca,end){
+ const days=daysBetween(lot.date,end),bd=businessDays(lot.date,end);
+ let gross;
+ if(offer.type==='cdi'){const daily=cdiDailyRate(cdi,offer.rate);gross=lot.principal*Math.pow(1+daily,bd)}
+ else {const annual=productAnnualRate(offer.type,offer.rate,cdi,ipca);gross=lot.principal*Math.pow(1+annual,days/365)}
+ const gain=Math.max(0,gross-lot.principal);
+ const exempt=offer.type==='lci'||offer.type==='lca';
+ const iof=exempt?0:gain*iofRate(days);
+ const taxableGain=Math.max(0,gain-iof);
+ const ir=exempt?0:taxableGain*irRate(days);
+ return {...lot,days,businessDays:bd,gross,gain,iof,ir,irPercent:exempt?0:irRate(days),net:gross-iof-ir,annualRate:productAnnualRate(offer.type,offer.rate,cdi,ipca)};
+}
+function runSimulation(){
+ const start=$('startDate').value,end=$('endDate').value;
+ if(!start||!end||end<=start){alert('Informe uma data de resgate posterior à data inicial.');return}
+ const cdi=Math.max(0,Number($('cdi').value)||0),ipca=Number($('ipca').value)||0;
+ const lots=makeLots(),total=lots.reduce((s,l)=>s+l.principal,0);
+ if(!lots.length){alert('Informe um investimento inicial ou aporte mensal maior que zero.');return}
+ offers=[
+  {name:'CDB '+$('cdbPct').value+'% do CDI',type:'cdi',rate:Number($('cdbPct').value)||0,taxable:true},
+  {name:'LCI '+$('lciPct').value+'% do CDI',type:'lci',rate:Number($('lciPct').value)||0,taxable:false},
+  {name:'LCA '+$('lcaPct').value+'% do CDI',type:'lca',rate:Number($('lcaPct').value)||0,taxable:false},
+  {name:'Prefixado '+$('prePct').value+'% a.a.',type:'pre',rate:Number($('prePct').value)||0,taxable:true},
+  {name:'IPCA + '+$('real').value+'% a.a.',type:'ipca',rate:Number($('real').value)||0,taxable:true}
+ ];
  const rows=offers.map(o=>{
-  const rate=annualRate(o,cdi,ipca);
-  // Cada aporte é tratado como um lote independente, com prazo e alíquota próprios.
-  const lots=simulateLots(pv,pmt,rate,months,o.type!=='isento');
-  return {...o,rate,gross:lots.gross,tax:lots.tax,net:lots.net,lotDetails:lots.details};
+  const details=lots.map(l=>growLot(l,o,cdi,ipca,end));
+  const gross=details.reduce((s,x)=>s+x.gross,0),iof=details.reduce((s,x)=>s+x.iof,0),ir=details.reduce((s,x)=>s+x.ir,0),net=gross-iof-ir;
+  const elapsed=daysBetween(start,end),inflationFactor=Math.pow(1+ipca/100,elapsed/365);
+  const realNet=net/inflationFactor;
+  const realGain=realNet-total;
+  const weightedAnnual=productAnnualRate(o.type==='lci'||o.type==='lca'?'cdi':o.type,o.rate,cdi,ipca);
+  return {...o,details,gross,iof,ir,net,total,realNet,realGain,annualRate:weightedAnnual};
  }).sort((a,b)=>b.net-a.net);
- $('results').innerHTML=rows.map((o,i)=>`<tr class="${i===0?'best':''}"><td><b>${o.name}</b>${i===0?' <span class="tag">Maior saldo</span>':''}</td><td>${pct(o.rate)} a.a.</td><td>${brl(o.gross)}</td><td>${brl(o.tax)}</td><td><b>${brl(o.net)}</b></td></tr>`).join('');
- $('bestValue').textContent=brl(rows[0].net);
- $('bestGain').textContent=brl(rows[0].net-invested);
- drawChart(pv,pmt,months,cdi);
- $('offers').innerHTML=offers.map(o=>`<tr><td>${o.name}</td><td>${o.type==='isento'?'LCI/LCA isenta':o.type==='cdb'?'CDB tributável':o.type==='pre'?'Prefixado':'IPCA+'}</td><td>${o.rate}${o.type==='isento'||o.type==='cdb'?'% do CDI':o.type==='ipca'?'% real':'% a.a.'}</td></tr>`).join('');
+ lastResults=rows;
+ $('totalInvested').textContent=brl(total);$('bestValue').textContent=brl(rows[0].net);$('bestGain').textContent=brl(rows[0].net-total);$('realGain').textContent=brl(rows[0].realGain);
+ $('results').innerHTML=rows.map((r,i)=>`<tr class="${i===0?'best':''}"><td><b>${r.name}</b>${i===0?' <span class="tag">Maior saldo</span>':''}</td><td>${pct(r.annualRate)} a.a.</td><td>${brl(r.gross)}</td><td>${brl(r.iof)}</td><td>${brl(r.ir)}</td><td><b>${brl(r.net)}</b></td><td>${brl(r.realGain)}</td></tr>`).join('');
+ $('offers').innerHTML=offers.map(o=>`<tr><td>${o.name}</td><td>${o.type==='cdi'?'Pós-fixado CDI':o.type==='lci'?'LCI isenta':o.type==='lca'?'LCA isenta':o.type==='pre'?'Prefixado':'IPCA+'}</td><td>${o.rate}${o.type==='cdi'||o.type==='lci'||o.type==='lca'?'% do CDI':o.type==='ipca'?'% real':'% a.a.'}</td><td>${o.taxable?'IR regressivo + IOF até 29 dias':'Sem IR/IOF estimado'}</td></tr>`).join('');
+ drawLots(rows[0]);drawChart(lots,rows.find(x=>x.type==='lci'),end,total);
 }
-function drawChart(pv,pmt,months,cdi){
- const c=$('chart'),x=c.getContext('2d'),w=c.width,h=c.height,p={l:85,r:15,t:12,b:30};
- const pw=w-p.l-p.r,ph=h-p.t-p.b,annual=cdiAnnualAtPercent(cdi,95),vals=[];
- for(let m=0;m<=months;m+=Math.max(1,Math.floor(months/60)))vals.push({m,v:fv(pv,pmt,annual,m)});
- vals.push({m:months,v:fv(pv,pmt,annual,months)});
- const max=Math.max(...vals.map(v=>v.v),1);
- x.clearRect(0,0,w,h);x.font='12px sans-serif';x.fillStyle='#718096';
- for(let i=0;i<=4;i++){let y=p.t+ph*i/4;x.strokeStyle='#e7edf4';x.beginPath();x.moveTo(p.l,y);x.lineTo(w-p.r,y);x.stroke();x.fillText(brl(max*(1-i/4)).replace(',00',''),3,y+4)}
- x.strokeStyle='#137f78';x.lineWidth=3;x.beginPath();
- vals.forEach((v,i)=>{let xx=p.l+pw*v.m/months,yy=p.t+ph*(1-v.v/max);i?x.lineTo(xx,yy):x.moveTo(xx,yy)});
- x.stroke();x.fillStyle='#718096';x.fillText('Início',p.l,h-7);x.fillText('Prazo final',w-p.r-65,h-7);
+function drawLots(row){
+ $('lotTabs').innerHTML=lastResults.map((r,i)=>`<button class="${r===row?'active':''}" data-i="${i}">${r.name}</button>`).join('');
+ $('lotTabs').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{drawLots(lastResults[Number(b.dataset.i)])}));
+ $('lotRows').innerHTML=row.details.map(x=>`<tr><td>${x.label}</td><td>${fmtDate(x.date)}</td><td>${x.days}</td><td>${brl(x.principal)}</td><td>${brl(x.gain)}</td><td>${brl(x.iof)}</td><td>${(x.irPercent*100).toFixed(1).replace('.',',')}%</td><td>${brl(x.ir)}</td><td><b>${brl(x.net)}</b></td></tr>`).join('');
 }
-function fmtDate(d){return d||'data indisponível'}
+function drawChart(lots,lci,end,total){
+ const c=$('chart'),ctx=c.getContext('2d'),w=c.width,h=c.height,p={l:88,r:15,t:15,b:28};
+ const points=36,values=[];
+ for(let k=0;k<=points;k++){
+  const date=new Date($('startDate').value+'T12:00:00');date.setTime(date.getTime()+(new Date(end+'T12:00:00')-date.getTime())*k/points);
+  const dateStr=localISO(date);let gross=0,invested=0;
+  for(const lot of lots){if(lot.date>dateStr)continue;const bd=businessDays(lot.date,dateStr);gross+=lot.principal*Math.pow(1+cdiDailyRate(Number($('cdi').value)||0,Number($('lciPct').value)||0),bd);invested+=lot.principal}
+  values.push({k,gross,invested});
+ }
+ const max=Math.max(1,...values.map(v=>v.gross)),pw=w-p.l-p.r,ph=h-p.t-p.b;
+ ctx.clearRect(0,0,w,h);ctx.font='12px sans-serif';ctx.fillStyle='#718096';
+ for(let i=0;i<=4;i++){const y=p.t+ph*i/4;ctx.strokeStyle='#e7edf4';ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(w-p.r,y);ctx.stroke();ctx.fillText(brl(max*(1-i/4)).replace(',00',''),2,y+4)}
+ function line(key,color,dash){ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=3;ctx.setLineDash(dash||[]);values.forEach((v,i)=>{const x=p.l+pw*v.k/points,y=p.t+ph*(1-v[key]/max);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.setLineDash([])}
+ line('gross','#13795b');line('invested','#8091a7',[6,4]);ctx.fillStyle='#718096';ctx.fillText('Início',p.l,h-6);ctx.fillText('Resgate',w-p.r-55,h-6);
+}
+function exportCsv(){
+ if(!lastResults.length){alert('Calcule a simulação antes de exportar.');return}
+ const lines=[['Cenario','Aporte','Data','Dias','Valor aplicado','Rendimento bruto','IOF','Aliquota IR','IR','Saldo liquido']];
+ for(const r of lastResults)for(const x of r.details)lines.push([r.name,x.label,x.date,x.days,x.principal.toFixed(2),x.gain.toFixed(2),x.iof.toFixed(2),(x.irPercent*100).toFixed(2)+'%',x.ir.toFixed(2),x.net.toFixed(2)]);
+ const csv='\uFEFF'+lines.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='investidor-inteligente-demonstrativo.csv';a.click();URL.revokeObjectURL(url);
+}
+function setDates(){
+ const now=new Date(),today=localISO(now);$('startDate').value=today;
+ const end=new Date(now);end.setFullYear(end.getFullYear()+5);$('endDate').value=localISO(end);
+}
 async function loadIndicators(){
- const btn=$('refresh'),status=$('apiStatus');
- btn.disabled=true;btn.textContent='Consultando...';status.className='note';status.textContent='Consultando séries oficiais do Banco Central...';
+ const btn=$('refresh'),status=$('apiStatus');btn.disabled=true;btn.textContent='Consultando...';status.className='note';status.textContent='Consultando séries oficiais do Banco Central...';
  try{
   const response=await fetch('/.netlify/functions/indicadores',{cache:'no-store'});
   if(!response.ok)throw new Error('Falha HTTP '+response.status);
-  const data=await response.json();
-  if(!data.ok)throw new Error(data.error||'Resposta inválida do serviço de indicadores.');
-  const i=data.indicators||{};
-  $('cdi').value=Number(i.cdiAnnualPercent).toFixed(3);
-  $('ipca').value=Number(i.ipca12mPercent).toFixed(2);
-  $('cdiDisplay').textContent=Number(i.cdiAnnualPercent).toFixed(2).replace('.',',')+'% a.a.';
-  $('cdiDate').textContent='Referência: '+fmtDate(i.cdiDate);
-  $('selicDisplay').textContent=Number(i.selicMetaPercent).toFixed(2).replace('.',',')+'% a.a.';
-  $('selicDate').textContent='Referência: '+fmtDate(i.selicDate);
-  $('ipcaDisplay').textContent=Number(i.ipca12mPercent).toFixed(2).replace('.',',')+'% em 12 meses';
-  $('ipcaDate').textContent='Referência: '+fmtDate(i.ipcaDate);
-  status.className='note good';
-  status.textContent='Atualizado com dados do BCB. '+(i.cdiConsistent===true?'CDI diário e anualizado conferem.':i.cdiConsistent===false?'Atenção: diferença entre as duas séries CDI.':'Conferência do CDI indisponível.')+' Consulta: '+new Date(data.updatedAt).toLocaleString('pt-BR')+'.';
-  calc();
- }catch(error){
-  status.className='note bad';
-  status.textContent='Não foi possível atualizar os indicadores: '+error.message+'. Os campos permanecem editáveis; confirme as taxas antes de investir.';
- }finally{btn.disabled=false;btn.textContent='Atualizar agora'}
+  const data=await response.json();if(!data.ok)throw new Error(data.error||'Resposta inválida da API');
+  const i=data.indicators||{};$('cdi').value=Number(i.cdiAnnualPercent).toFixed(3);$('ipca').value=Number(i.ipca12mPercent).toFixed(2);
+  $('cdiDisplay').textContent=Number(i.cdiAnnualPercent).toFixed(2).replace('.',',')+'% a.a.';$('cdiDate').textContent='Referência: '+fmtDate(i.cdiDate);
+  $('selicDisplay').textContent=Number(i.selicMetaPercent).toFixed(2).replace('.',',')+'% a.a.';$('selicDate').textContent='Referência: '+fmtDate(i.selicDate);
+  $('ipcaDisplay').textContent=Number(i.ipca12mPercent).toFixed(2).replace('.',',')+'% em 12 meses';$('ipcaDate').textContent='Referência: '+fmtDate(i.ipcaDate);
+  status.className='note good';status.textContent='Indicadores atualizados pelo BCB. '+(i.cdiConsistent===true?'Séries CDI conferem.':'Conferência do CDI indisponível.')+' Consulta: '+new Date(data.updatedAt).toLocaleString('pt-BR')+'.';
+  runSimulation();
+ }catch(e){status.className='note bad';status.textContent='Não foi possível atualizar os indicadores: '+e.message+'. Você pode informar taxas manualmente.'}
+ finally{btn.disabled=false;btn.textContent='Atualizar agora'}
 }
-$('calculate').addEventListener('click',calc);
-$('refresh').addEventListener('click',loadIndicators);
-['initial','monthly','years','cdi','ipca','real'].forEach(id=>$(id).addEventListener('change',calc));
-calc();
-loadIndicators();
+$('calculate').addEventListener('click',runSimulation);$('refresh').addEventListener('click',loadIndicators);$('export').addEventListener('click',exportCsv);
+$('startDate').addEventListener('change',()=>{if($('endDate').value<=$('startDate').value)$('endDate').value=addMonthsClamped($('startDate').value,60,Number($('monthlyDay').value)||7);runSimulation()});
+['initial','monthly','monthlyDay','endDate','cdi','ipca','real','cdbPct','lciPct','lcaPct','prePct'].forEach(id=>$(id).addEventListener('change',runSimulation));
+setDates();runSimulation();loadIndicators();
 </script>
 </body></html>

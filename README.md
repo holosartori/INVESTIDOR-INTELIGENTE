@@ -1,16 +1,27 @@
-# Investidor Inteligente — versão 3.1
+# Investidor Inteligente Pro — versão 4.0
 
-## Instalação
-Substitua o `index.html` atual pelo arquivo deste pacote. Mantenha `netlify/functions/indicadores.js` e `netlify.toml` inalterados.
+## Publicação em uma única atualização
+Substitua somente o `index.html` no GitHub pelo arquivo deste pacote. Mantenha a pasta `netlify/functions/` e o `netlify.toml` atuais. A integração com o BCB não foi alterada.
 
-## Alteração principal
-O cálculo do IR agora é feito lote a lote:
-- aporte inicial: prazo completo;
-- cada aporte mensal: prazo restante até o fim da simulação;
-- alíquota regressiva estimada por prazo: até 180 dias 22,5%; 181–360 dias 20%; 361–720 dias 17,5%; acima de 720 dias 15%;
-- LCI/LCA continuam com IR zero para pessoa física, conforme regra aplicável.
+## Recursos
+- Indicadores CDI, Selic e IPCA via função Netlify existente.
+- Datas de investimento inicial, aportes mensais e resgate.
+- Cálculo por lote, com dias corridos reais entre datas.
+- CDI projetado com dias úteis de segunda a sexta (sem calendário de feriados).
+- Prefixado e IPCA+ capitalizados por dias corridos.
+- IR regressivo por lote.
+- IOF regressivo nos resgates até 29 dias.
+- Comparação de CDB, LCI, LCA, prefixado e IPCA+.
+- Ganho real estimado e demonstrativo por aporte.
+- Exportação do demonstrativo para CSV.
 
-## Limitação importante
-Como a simulação usa aportes mensais e não datas de calendário informadas pelo usuário, o prazo de cada lote é convertido de meses em dias corridos médios (365,2425/12). O cálculo é uma estimativa. Para apuração exata, usar datas efetivas de aplicação e resgate, regras do produto e legislação vigente.
+## Premissas e limites importantes
+- A taxa CDI, IPCA e demais taxas permanecem constantes durante toda a projeção.
+- A contagem de dias úteis exclui fins de semana, mas não feriados.
+- O simulador não modela carência, liquidez, marcação a mercado, spreads, taxas, eventos de crédito nem regras específicas de cada emissor.
+- A tributação segue uma estimativa geral da tabela regressiva de renda fixa e IOF; confirme o enquadramento do produto e a legislação vigente.
+- Para LCI/LCA, o modelo considera isenção de IR para pessoa física, mas não avalia elegibilidade, carência ou restrições de resgate.
+- O ganho real mostrado é uma estimativa: saldo líquido deflacionado pelo IPCA projetado ao longo do prazo total menos os aportes nominais. Não é uma TIR real ponderada por fluxo de caixa.
 
-O backend de indicadores BCB não foi alterado.
+## Validação pré-publicação
+O JavaScript foi verificado sintaticamente. Antes de publicar, teste os campos de data, aporte mensal zero/positivo, resgate curto e longo, CSV e a resposta da função BCB existente.
